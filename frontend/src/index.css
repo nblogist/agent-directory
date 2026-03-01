@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-primary: #3713ec;
+  --color-accent: #00f2ff;
+  --color-dark-bg: #131022;
+  --color-dark-surface: #1d1c27;
+  --color-dark-surface2: #1c1930;
+  --color-dark-border: #2b2839;
+  --font-sans: 'Space Grotesk', sans-serif;
+  --radius-sm: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-white antialiased;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+/* Neon glow effect for hero text */
+.neon-glow {
+  text-shadow: 0 0 10px rgba(55, 19, 236, 0.5);
+}
+
+/* Glass card utility */
+.glass-card {
+  background: rgba(29, 28, 39, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+/* Material Symbols rendering fixes */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+  user-select: none;
+}
