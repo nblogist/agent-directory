@@ -5,7 +5,10 @@ use serde::Serialize;
 
 use crate::db::DbPool;
 use crate::errors::{AppError, ErrorBody};
-use crate::models::listing::{CategoryRef, ChainRef, Listing, PublicListing, TagRef};
+use crate::guards::admin_token::AdminToken;
+use crate::guards::rate_limit::ReadRateLimit;
+use crate::guards::rate_limit::SubmitRateLimit;
+use crate::models::listing::{CategoryRef, ChainRef, Listing, NewListing, PublicListing, TagRef};
 
 // ---------------------------------------------------------------------------
 // Pagination helpers
@@ -44,7 +47,7 @@ pub struct ListingsQuery<'r> {
 // Helper: fetch associated data for a listing id
 // ---------------------------------------------------------------------------
 
-async fn fetch_categories(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<CategoryRef>, sqlx::Error> {
+pub async fn fetch_categories(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<CategoryRef>, sqlx::Error> {
     sqlx::query_as::<_, CategoryRef>(
         "SELECT c.id, c.name, c.slug FROM categories c \
          INNER JOIN listing_categories lc ON lc.category_id = c.id \
@@ -56,7 +59,7 @@ async fn fetch_categories(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<C
     .await
 }
 
-async fn fetch_tags(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<TagRef>, sqlx::Error> {
+pub async fn fetch_tags(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<TagRef>, sqlx::Error> {
     sqlx::query_as::<_, TagRef>(
         "SELECT t.id, t.name, t.slug FROM tags t \
          INNER JOIN listing_tags lt ON lt.tag_id = t.id \
@@ -68,7 +71,7 @@ async fn fetch_tags(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<TagRef>
     .await
 }
 
-async fn fetch_chains(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<ChainRef>, sqlx::Error> {
+pub async fn fetch_chains(pool: &DbPool, listing_id: uuid::Uuid) -> Result<Vec<ChainRef>, sqlx::Error> {
     sqlx::query_as::<_, ChainRef>(
         "SELECT cs.id, cs.name, cs.slug, cs.is_featured FROM chain_support cs \
          INNER JOIN listing_chains lch ON lch.chain_id = cs.id \
@@ -113,6 +116,7 @@ async fn build_public_listing(pool: &DbPool, row: Listing) -> Result<PublicListi
 pub async fn list_listings(
     pool: &State<DbPool>,
     query: ListingsQuery<'_>,
+    _rl: ReadRateLimit,
 ) -> Result<Json<PaginatedResponse<PublicListing>>, Custom<Json<ErrorBody>>> {
     let page = query.page.unwrap_or(1).max(1);
     let per_page = query.per_page.unwrap_or(20).min(100).max(1);
@@ -270,6 +274,7 @@ pub async fn list_listings(
 pub async fn get_listing(
     pool: &State<DbPool>,
     slug: &str,
+    _rl: ReadRateLimit,
 ) -> Result<Json<PublicListing>, Custom<Json<ErrorBody>>> {
     // Atomically increment view_count and return the updated row.
     // Only returns the listing if status = 'approved'.
@@ -295,4 +300,234 @@ pub async fn get_listing(
             Ok(Json(pl))
         }
     }
+}
+
+// ---------------------------------------------------------------------------
+// Response types for submit and reputation endpoints
+// ---------------------------------------------------------------------------
+
+#[derive(Serialize)]
+pub struct SubmitResponse {
+    pub id: uuid::Uuid,
+    pub slug: String,
+    pub status: String,
+    pub submitted_at: chrono::DateTime<chrono::Utc>,
+}
+
+#[derive(serde::Deserialize, Debug)]
+pub struct ReputationPayload {
+    pub score: f64,
+}
+
+#[derive(Serialize)]
+pub struct ReputationResponse {
+    pub id: uuid::Uuid,
+    pub reputation_score: Option<f64>,
+    pub message: String,
+}
+
+// ---------------------------------------------------------------------------
+// POST /api/listings — public submission with validation and rate limiting
+// ---------------------------------------------------------------------------
+
+#[post("/listings", data = "<body>")]
+pub async fn submit_listing(
+    pool: &State<DbPool>,
+    body: Json<NewListing>,
+    _rl: SubmitRateLimit,
+) -> Result<rocket::response::status::Created<Json<SubmitResponse>>, Custom<Json<ErrorBody>>> {
+    let payload = body.into_inner();
+
+    // --- Validation ---
+    let name = payload.name.trim().to_string();
+    if name.is_empty() || name.len() > 100 {
+        return Err(AppError::Validation("name must be 1-100 characters".to_string()).into_response());
+    }
+    let short_desc = payload.short_description.trim().to_string();
+    if short_desc.is_empty() || short_desc.len() > 140 {
+        return Err(AppError::Validation("short_description must be 1-140 characters".to_string()).into_response());
+    }
+    if payload.description.trim().len() < 10 {
+        return Err(AppError::Validation("description must be at least 10 characters".to_string()).into_response());
+    }
+    if !payload.website_url.starts_with("https://") {
+        return Err(AppError::Validation("website_url must start with https://".to_string()).into_response());
+    }
+    if let Some(ref gh) = payload.github_url {
+        if !gh.is_empty() && !gh.starts_with("https://github.com/") {
+            return Err(AppError::Validation("github_url must start with https://github.com/".to_string()).into_response());
+        }
+    }
+    let email = payload.contact_email.trim().to_string();
+    if !email.contains('@') || !email.contains('.') {
+        return Err(AppError::Validation("contact_email must be a valid email address".to_string()).into_response());
+    }
+    if payload.categories.is_empty() {
+        return Err(AppError::Validation("at least one category is required".to_string()).into_response());
+    }
+
+    // --- Validate tag format before DB operations ---
+    let tag_re = regex::Regex::new(r"^[a-z0-9][a-z0-9-]{0,59}$").expect("valid regex");
+    let mut validated_tags: Vec<String> = Vec::new();
+    for tag_name_raw in &payload.tags {
+        let tag_name = tag_name_raw.trim().to_lowercase();
+        if tag_name.is_empty() || tag_name.len() > 60 {
+            return Err(AppError::Validation(format!("tag '{}' must be 1-60 characters", tag_name_raw)).into_response());
+        }
+        if !tag_re.is_match(&tag_name) {
+            return Err(AppError::Validation(format!("tag '{}' must be lowercase alphanumeric and hyphens only", tag_name_raw)).into_response());
+        }
+        validated_tags.push(tag_name);
+    }
+
+    // --- Generate slug ---
+    let slug = crate::slug::unique_slug(&name, pool.inner())
+        .await
+        .map_err(|e| AppError::Db(e).into_response())?;
+
+    // --- Insert listing ---
+    let listing_id: uuid::Uuid = sqlx::query_scalar(
+        "INSERT INTO listings \
+         (id, name, slug, short_description, description, logo_url, website_url, \
+          github_url, docs_url, api_endpoint_url, contact_email, status) \
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') \
+         RETURNING id"
+    )
+    .bind(&name)
+    .bind(&slug)
+    .bind(&short_desc)
+    .bind(payload.description.trim())
+    .bind(&payload.logo_url)
+    .bind(&payload.website_url)
+    .bind(&payload.github_url)
+    .bind(&payload.docs_url)
+    .bind(&payload.api_endpoint_url)
+    .bind(&email)
+    .fetch_one(pool.inner())
+    .await
+    .map_err(|e| AppError::Db(e).into_response())?;
+
+    // --- Associate categories (verify existence first) ---
+    for cat_id in &payload.categories {
+        let exists: bool = sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM categories WHERE id = $1)")
+            .bind(cat_id)
+            .fetch_one(pool.inner())
+            .await
+            .unwrap_or(false);
+        if !exists {
+            return Err(AppError::Validation(format!("category {} does not exist", cat_id)).into_response());
+        }
+        sqlx::query("INSERT INTO listing_categories (listing_id, category_id) VALUES ($1, $2) ON CONFLICT DO NOTHING")
+            .bind(listing_id)
+            .bind(cat_id)
+            .execute(pool.inner())
+            .await
+            .map_err(|e| AppError::Db(e).into_response())?;
+    }
+
+    // --- Upsert tags and associate ---
+    for tag_name in &validated_tags {
+        let tag_slug = slug::slugify(tag_name);
+        // Upsert tag: create if not exists, otherwise return existing id
+        let tag_id: uuid::Uuid = sqlx::query_scalar(
+            "INSERT INTO tags (id, name, slug) VALUES (gen_random_uuid(), $1, $2) \
+             ON CONFLICT (slug) DO UPDATE SET name = EXCLUDED.name \
+             RETURNING id"
+        )
+        .bind(tag_name)
+        .bind(&tag_slug)
+        .fetch_one(pool.inner())
+        .await
+        .map_err(|e| AppError::Db(e).into_response())?;
+
+        sqlx::query("INSERT INTO listing_tags (listing_id, tag_id) VALUES ($1, $2) ON CONFLICT DO NOTHING")
+            .bind(listing_id)
+            .bind(tag_id)
+            .execute(pool.inner())
+            .await
+            .map_err(|e| AppError::Db(e).into_response())?;
+    }
+
+    // --- Associate chains (verify existence first) ---
+    for chain_id in &payload.chains {
+        let exists: bool = sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM chain_support WHERE id = $1)")
+            .bind(chain_id)
+            .fetch_one(pool.inner())
+            .await
+            .unwrap_or(false);
+        if !exists {
+            return Err(AppError::Validation(format!("chain {} does not exist", chain_id)).into_response());
+        }
+        sqlx::query("INSERT INTO listing_chains (listing_id, chain_id) VALUES ($1, $2) ON CONFLICT DO NOTHING")
+            .bind(listing_id)
+            .bind(chain_id)
+            .execute(pool.inner())
+            .await
+            .map_err(|e| AppError::Db(e).into_response())?;
+    }
+
+    // --- Fetch submitted_at for response ---
+    let submitted_at: chrono::DateTime<chrono::Utc> = sqlx::query_scalar(
+        "SELECT submitted_at FROM listings WHERE id = $1"
+    )
+    .bind(listing_id)
+    .fetch_one(pool.inner())
+    .await
+    .map_err(|e| AppError::Db(e).into_response())?;
+
+    let response = SubmitResponse {
+        id: listing_id,
+        slug: slug.clone(),
+        status: "pending".to_string(),
+        submitted_at,
+    };
+
+    Ok(rocket::response::status::Created::new(
+        format!("/api/listings/{}", slug)
+    ).body(Json(response)))
+}
+
+// ---------------------------------------------------------------------------
+// PATCH /api/listings/:id/reputation — stubbed admin endpoint
+// ---------------------------------------------------------------------------
+
+/// PATCH /api/listings/:id/reputation
+/// Stubbed endpoint — accepts a score payload, stores it, returns stubbed response.
+/// Protected by AdminToken guard. For future reputation scoring service integration.
+#[patch("/listings/<id>/reputation", data = "<body>")]
+pub async fn patch_reputation(
+    pool: &State<DbPool>,
+    id: &str,
+    body: Json<ReputationPayload>,
+    _auth: AdminToken,
+) -> Result<Json<ReputationResponse>, Custom<Json<ErrorBody>>> {
+    let listing_id = uuid::Uuid::parse_str(id)
+        .map_err(|_| AppError::Validation("invalid listing id".to_string()).into_response())?;
+
+    let score = body.into_inner().score;
+
+    // Validate score range: 0.00–100.00
+    if !(0.0..=100.0).contains(&score) {
+        return Err(AppError::Validation("reputation_score must be between 0.00 and 100.00".to_string()).into_response());
+    }
+
+    // Store the score (stubbed — in production this comes from the scoring service)
+    let updated: Option<uuid::Uuid> = sqlx::query_scalar(
+        "UPDATE listings SET reputation_score = $1, updated_at = now() WHERE id = $2 RETURNING id"
+    )
+    .bind(score)
+    .bind(listing_id)
+    .fetch_optional(pool.inner())
+    .await
+    .map_err(|e| AppError::Db(e).into_response())?;
+
+    if updated.is_none() {
+        return Err(AppError::NotFound.into_response());
+    }
+
+    Ok(Json(ReputationResponse {
+        id: listing_id,
+        reputation_score: Some(score),
+        message: "Reputation score updated (stubbed — scoring service integration pending)".to_string(),
+    }))
 }

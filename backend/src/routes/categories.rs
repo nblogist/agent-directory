@@ -3,6 +3,7 @@ use rocket::State;
 
 use crate::db::DbPool;
 use crate::errors::AppError;
+use crate::guards::rate_limit::ReadRateLimit;
 use crate::models::category::Category;
 
 /// GET /api/categories
@@ -10,6 +11,7 @@ use crate::models::category::Category;
 #[get("/categories")]
 pub async fn list_categories(
     pool: &State<DbPool>,
+    _rl: ReadRateLimit,
 ) -> Result<Json<Vec<Category>>, rocket::response::status::Custom<Json<crate::errors::ErrorBody>>> {
     let categories = sqlx::query_as::<_, Category>(
         "SELECT id, name, slug, description, listing_count FROM categories ORDER BY name ASC"

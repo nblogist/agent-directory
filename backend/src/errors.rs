@@ -42,8 +42,10 @@ impl AppError {
                 "RATE_LIMIT",
                 format!("Too many requests. Retry after {}s", retry_after),
             ),
-            AppError::Db(_) =>
-                (Status::InternalServerError, "DB_ERROR", "Internal error".into()),
+            AppError::Db(ref e) => {
+                tracing::error!("DB error: {:?}", e);
+                (Status::InternalServerError, "DB_ERROR", "Internal error".into())
+            }
         };
         Custom(status, Json(ErrorBody { error: msg, code: code.into() }))
     }

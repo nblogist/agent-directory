@@ -1,14 +1,14 @@
-FROM rust:1.75-slim-bookworm AS builder
+FROM rust:1.93-slim-bookworm AS builder
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y pkg-config libssl-dev && rm -rf /var/lib/apt/lists/*
 
-# Copy manifest files first to cache dependency compilation
-COPY Cargo.toml Cargo.lock* ./
+# Copy manifest + lockfile first to cache dependency compilation
+COPY Cargo.toml Cargo.lock ./
 
-# Create a dummy main.rs so cargo can build dependencies without the real source
+# Build dependencies only
 RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release || true
+RUN cargo build --release
 
 # Now copy real source and migrations
 COPY . .

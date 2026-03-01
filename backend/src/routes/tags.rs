@@ -3,6 +3,7 @@ use rocket::State;
 
 use crate::db::DbPool;
 use crate::errors::AppError;
+use crate::guards::rate_limit::ReadRateLimit;
 use crate::models::tag::Tag;
 
 /// GET /api/tags
@@ -10,6 +11,7 @@ use crate::models::tag::Tag;
 #[get("/tags")]
 pub async fn list_tags(
     pool: &State<DbPool>,
+    _rl: ReadRateLimit,
 ) -> Result<Json<Vec<Tag>>, rocket::response::status::Custom<Json<crate::errors::ErrorBody>>> {
     let tags = sqlx::query_as::<_, Tag>(
         "SELECT id, name, slug, listing_count FROM tags ORDER BY listing_count DESC, name ASC"

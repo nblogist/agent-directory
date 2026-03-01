@@ -3,6 +3,7 @@ use rocket::State;
 
 use crate::db::DbPool;
 use crate::errors::AppError;
+use crate::guards::rate_limit::ReadRateLimit;
 use crate::models::chain::Chain;
 
 /// GET /api/chains
@@ -11,6 +12,7 @@ use crate::models::chain::Chain;
 #[get("/chains")]
 pub async fn list_chains(
     pool: &State<DbPool>,
+    _rl: ReadRateLimit,
 ) -> Result<Json<Vec<Chain>>, rocket::response::status::Custom<Json<crate::errors::ErrorBody>>> {
     let chains = sqlx::query_as::<_, Chain>(
         "SELECT id, name, slug, is_featured FROM chain_support ORDER BY is_featured DESC, name ASC"
