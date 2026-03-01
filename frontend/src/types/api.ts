@@ -108,3 +108,50 @@ export interface SubmitResponse {
   status: string;
   submitted_at: string;
 }
+
+// --- Admin Types ---
+
+export type ListingStatus = 'pending' | 'approved' | 'rejected';
+
+export interface AdminListing {
+  id: string;
+  name: string;
+  slug: string;
+  short_description: string;
+  description: string;
+  logo_url: string | null;
+  website_url: string;
+  github_url: string | null;
+  docs_url: string | null;
+  api_endpoint_url: string | null;
+  contact_email: string;
+  status: ListingStatus;
+  rejection_note: string | null;
+  reputation_score: number | null;
+  view_count: number;
+  submitted_at: string;
+  updated_at: string;
+  approved_at: string | null;
+}
+
+export interface AdminListingDetail extends AdminListing {
+  categories: CategoryRef[];
+  tags: TagRef[];
+  chains: ChainRef[];
+}
+
+export interface AdminStats {
+  total: number;
+  approved: number;
+  pending: number;
+  rejected: number;
+  total_views: number;
+  top_listings: { id: string; name: string; slug: string; view_count: number }[];
+}
+
+export interface AdminListingsQuery {
+  status?: ListingStatus;
+  search?: string;
+  page?: number;
+  per_page?: number;
+}

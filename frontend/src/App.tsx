@@ -6,6 +6,13 @@ import BrowsePage from './pages/BrowsePage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import SubmitPage from './pages/SubmitPage';
 import NotFoundPage from './pages/NotFoundPage';
+// Admin imports
+import AdminLogin from './pages/admin/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminListings from './pages/admin/AdminListings';
+import AdminEditListing from './pages/admin/AdminEditListing';
+import { AdminGuard } from './components/admin/AdminGuard';
+import { AdminLayout } from './components/admin/AdminLayout';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,6 +28,19 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          {/* Admin login (unauthenticated, no layout) */}
+          <Route path="/admin" element={<AdminLogin />} />
+
+          {/* Protected admin routes: AdminGuard checks token, AdminLayout provides sidebar */}
+          <Route element={<AdminGuard />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin/dashboard" element={<AdminDashboard />} />
+              <Route path="/admin/listings" element={<AdminListings />} />
+              <Route path="/admin/listings/:id" element={<AdminEditListing />} />
+            </Route>
+          </Route>
+
+          {/* Public routes */}
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowsePage />} />
