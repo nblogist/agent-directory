@@ -43,20 +43,22 @@ export function useListingsQuery() {
   function setFilter(key: string, value: string | undefined) {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      if (value) {
+      if (value !== undefined && value !== null) {
         next.set(key, value);
       } else {
         next.delete(key);
       }
       // Reset to page 1 whenever a filter changes (not when paginating)
-      if (key !== 'page') next.set('page', '1');
+      if (key !== 'page') next.delete('page');
       return next;
     });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   /** Remove all filter params, returning to default browse state */
   function clearFilters() {
     setSearchParams({});
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   return {

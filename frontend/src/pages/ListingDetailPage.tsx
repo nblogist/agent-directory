@@ -1,158 +1,230 @@
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { fetchListing, ApiError } from '../lib/api';
-import DetailHero from '../components/detail/DetailHero';
-import DetailDescription from '../components/detail/DetailDescription';
-import DetailSidebar from '../components/detail/DetailSidebar';
-import NotFoundPage from './NotFoundPage';
+import { fetchListing } from '../lib/api';
+import { getCategoryColor } from '../lib/categoryColors';
+import ListingLogo from '../components/ListingLogo';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
-/** Skeleton loading state matching the hero + description + sidebar layout */
-function DetailSkeleton() {
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-pulse">
-      {/* Breadcrumbs skeleton */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="h-4 w-10 bg-dark-surface rounded" />
-        <div className="h-4 w-4 bg-dark-surface rounded" />
-        <div className="h-4 w-14 bg-dark-surface rounded" />
-        <div className="h-4 w-4 bg-dark-surface rounded" />
-        <div className="h-4 w-32 bg-dark-surface rounded" />
-      </div>
-
-      {/* Hero skeleton */}
-      <div className="flex flex-col sm:flex-row gap-6 items-start">
-        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-dark-surface shrink-0" />
-        <div className="flex-1 min-w-0 space-y-3">
-          <div className="h-9 w-2/3 bg-dark-surface rounded" />
-          <div className="h-5 w-full bg-dark-surface rounded" />
-          <div className="flex gap-2 mt-4">
-            <div className="h-7 w-24 bg-dark-surface rounded-full" />
-            <div className="h-7 w-16 bg-dark-surface rounded-full" />
-            <div className="h-7 w-20 bg-dark-surface rounded-full" />
-          </div>
-        </div>
-      </div>
-
-      {/* Action buttons skeleton */}
-      <div className="mt-6 flex gap-3">
-        <div className="h-10 w-28 bg-dark-surface rounded-lg" />
-        <div className="h-10 w-24 bg-dark-surface rounded-lg" />
-      </div>
-
-      {/* Body skeleton */}
-      <div className="mt-8 flex flex-col lg:flex-row gap-8">
-        {/* Main content */}
-        <div className="flex-1 min-w-0 space-y-4">
-          {/* Tab bar */}
-          <div className="border-b border-dark-border pb-3 flex gap-4">
-            <div className="h-5 w-20 bg-dark-surface rounded" />
-            <div className="h-5 w-24 bg-dark-surface rounded opacity-50" />
-          </div>
-          {/* Card */}
-          <div className="glass-card rounded-xl border border-dark-border p-6 space-y-3">
-            <div className="h-4 w-full bg-dark-surface rounded" />
-            <div className="h-4 w-5/6 bg-dark-surface rounded" />
-            <div className="h-4 w-4/6 bg-dark-surface rounded" />
-            <div className="h-4 w-full bg-dark-surface rounded" />
-            <div className="h-4 w-3/4 bg-dark-surface rounded" />
-          </div>
-        </div>
-
-        {/* Sidebar */}
-        <div className="w-full lg:w-80 shrink-0 space-y-6">
-          <div className="glass-card rounded-xl border border-dark-border p-5 space-y-3">
-            <div className="h-4 w-20 bg-dark-surface rounded" />
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="h-8 w-full bg-dark-surface rounded" />
-            ))}
-          </div>
-          <div className="glass-card rounded-xl border border-dark-border p-5 space-y-3">
-            <div className="h-4 w-24 bg-dark-surface rounded" />
-            <div className="h-9 w-full bg-dark-surface rounded-lg" />
-            <div className="h-9 w-full bg-dark-surface rounded-lg" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/** Error display with retry option */
-function ErrorDisplay({ error, onRetry }: { error: unknown; onRetry: () => void }) {
-  const message = error instanceof Error ? error.message : 'An unexpected error occurred.';
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-      <span className="material-symbols-outlined text-5xl text-gray-600 mb-4 block">
-        error_outline
-      </span>
-      <h2 className="text-xl font-semibold mb-2">Something went wrong</h2>
-      <p className="text-gray-400 mb-6">{message}</p>
-      <button
-        onClick={onRetry}
-        className="bg-primary hover:scale-[1.05] active:scale-95 transition-all px-6 py-2.5 rounded-lg font-semibold inline-flex items-center gap-2"
-      >
-        <span className="material-symbols-outlined text-base leading-none">refresh</span>
-        Try Again
-      </button>
-      <div className="mt-4">
-        <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm">
-          Back to Home
-        </Link>
-      </div>
-    </div>
-  );
-}
-
-/**
- * Full listing detail page.
- * Fetches agent data by slug, auto-increments view count via GET /api/listings/:slug,
- * and renders hero, description with markdown, and metadata sidebar.
- */
 export default function ListingDetailPage() {
   const { slug } = useParams<{ slug: string }>();
 
-  const {
-    data: listing,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  const { data: listing, isLoading, error } = useQuery({
     queryKey: ['listing', slug],
     queryFn: () => fetchListing(slug!),
     enabled: !!slug,
-    retry: (failureCount, err) => {
-      // Don't retry on 404
-      if (err instanceof ApiError && err.status === 404) return false;
-      return failureCount < 2;
-    },
   });
 
-  // Loading state
-  if (isLoading) return <DetailSkeleton />;
-
-  // 404 state — if API returns 404, show styled 404 page inline
-  if (error instanceof ApiError && error.status === 404) {
-    return <NotFoundPage />;
+  if (isLoading) {
+    return (
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-8 animate-pulse">
+        <div className="h-4 w-48 bg-slate-800 rounded mb-8" />
+        <div className="flex flex-col md:flex-row gap-6 items-start mb-10">
+          <div className="size-32 rounded-xl bg-slate-800" />
+          <div className="space-y-3 flex-1">
+            <div className="h-8 w-64 bg-slate-800 rounded" />
+            <div className="h-4 w-96 bg-slate-800/60 rounded" />
+            <div className="flex gap-2">
+              <div className="h-6 w-20 bg-slate-800 rounded" />
+              <div className="h-6 w-20 bg-slate-800 rounded" />
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <div className="lg:col-span-8 space-y-4">
+            <div className="h-6 w-32 bg-slate-800 rounded" />
+            <div className="h-40 bg-slate-800/40 rounded-xl" />
+          </div>
+          <div className="lg:col-span-4 space-y-4">
+            <div className="h-48 bg-slate-800/40 rounded-xl" />
+          </div>
+        </div>
+      </main>
+    );
   }
 
-  // Other error state
   if (error || !listing) {
-    return <ErrorDisplay error={error} onRetry={() => refetch()} />;
+    return (
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-20 text-center">
+        <span className="material-symbols-outlined text-6xl text-slate-600 mb-4">error_outline</span>
+        <h1 className="text-3xl font-bold mb-2">Listing Not Found</h1>
+        <p className="text-slate-400 mb-8">The listing you're looking for doesn't exist or has been removed.</p>
+        <Link to="/browse" className="inline-block bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors">
+          Browse Directory
+        </Link>
+      </main>
+    );
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <DetailHero listing={listing} />
+    <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-8">
+      {/* Breadcrumbs */}
+      <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
+        <Link className="text-slate-500 hover:text-primary transition-colors" to="/">Home</Link>
+        <span className="text-slate-400 material-symbols-outlined text-xs">chevron_right</span>
+        <Link className="text-slate-500 hover:text-primary transition-colors" to="/browse">Directory</Link>
+        <span className="text-slate-400 material-symbols-outlined text-xs">chevron_right</span>
+        <span className="text-primary">{listing.name}</span>
+      </nav>
 
-      <div className="mt-8 flex flex-col lg:flex-row gap-8">
-        {/* Main content: description + coming-soon sections */}
-        <div className="flex-1 min-w-0">
-          <DetailDescription listing={listing} />
+      {/* Profile Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start gap-8 mb-10">
+        <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+          <div className="bg-primary/10 rounded-2xl p-1 border-2 border-primary/20">
+            <ListingLogo
+              name={listing.name}
+              logoUrl={listing.logo_url}
+              size="size-32"
+              textSize="text-4xl"
+              rounded="rounded-xl"
+            />
+          </div>
+          <div>
+            <h1 className="text-white text-4xl font-bold tracking-tight mb-2">{listing.name}</h1>
+            <p className="text-slate-400 text-lg mb-4">{listing.short_description}</p>
+            <div className="flex flex-wrap gap-2">
+              {listing.categories.map(cat => {
+                const c = getCategoryColor(cat.slug);
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/browse?category=${cat.slug}`}
+                    className={`px-3 py-1 rounded-full ${c.bg} ${c.text} text-xs font-semibold hover:opacity-80 transition-opacity`}
+                  >
+                    {cat.name}
+                  </Link>
+                );
+              })}
+              {listing.chains.map(chain => (
+                <Link
+                  key={chain.id}
+                  to={`/browse?chain=${chain.slug}`}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    chain.is_featured
+                      ? 'bg-amber-500/10 text-amber-500'
+                      : 'bg-slate-800 text-slate-300'
+                  } hover:opacity-80 transition-opacity`}
+                >
+                  {chain.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+          <a
+            href={listing.website_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 lg:flex-none flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-primary text-white text-sm font-bold hover:opacity-90 transition-opacity"
+          >
+            <span className="material-symbols-outlined text-lg">language</span> Website
+          </a>
+          {listing.docs_url && (
+            <a
+              href={listing.docs_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-slate-800 text-white text-sm font-bold hover:bg-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">description</span> Docs
+            </a>
+          )}
+          {listing.github_url && (
+            <a
+              href={listing.github_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-slate-800 text-white text-sm font-bold hover:bg-slate-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">code</span> GitHub
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Main Content Column */}
+        <div className="lg:col-span-8 space-y-10">
+          {/* About Section */}
+          <section>
+            <h3 className="text-xl font-bold mb-4">About {listing.name}</h3>
+            <div className="bg-slate-900 border border-slate-800 p-8 rounded-xl">
+              <MarkdownRenderer content={listing.description} />
+            </div>
+          </section>
+
+          {/* Tags Section */}
+          {listing.tags.length > 0 && (
+            <section>
+              <h3 className="text-xl font-bold mb-4">Tags</h3>
+              <div className="flex flex-wrap gap-2">
+                {listing.tags.map(tag => (
+                  <Link
+                    key={tag.id}
+                    to={`/browse?tag=${tag.slug}`}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-sm hover:bg-primary/10 hover:text-primary transition-colors"
+                  >
+                    {tag.name}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
-        {/* Sidebar: metadata, chain support, submit CTA */}
-        <DetailSidebar listing={listing} />
+        {/* Sidebar Content Column */}
+        <div className="lg:col-span-4 space-y-8">
+          {/* Quick Info Card */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+            <div className="p-6 border-b border-slate-800 bg-slate-900/50">
+              <h3 className="font-bold flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary">info</span> Quick Info
+              </h3>
+            </div>
+            <div className="p-6 space-y-5">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-500">Views</span>
+                <span className="text-sm font-bold flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-slate-400">visibility</span>
+                  {listing.view_count.toLocaleString()}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-500">Reputation</span>
+                {listing.reputation_score != null ? (
+                  <span className="text-sm font-bold text-primary">{listing.reputation_score}</span>
+                ) : (
+                  <span className="text-sm text-slate-500">N/A</span>
+                )}
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-slate-500">Listed</span>
+                <span className="text-sm text-slate-300">
+                  {new Date(listing.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+              </div>
+              {listing.api_endpoint_url && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">API</span>
+                  <a href={listing.api_endpoint_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate ml-4">
+                    Endpoint
+                  </a>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* CTA Ad Card */}
+          <div className="bg-gradient-to-br from-primary to-blue-600 rounded-xl p-6 text-white text-center shadow-xl shadow-primary/30">
+            <span className="material-symbols-outlined text-4xl mb-3">auto_awesome</span>
+            <h5 className="text-lg font-bold mb-2">Want your tool listed?</h5>
+            <p className="text-white/80 text-sm mb-4">Reach crypto-native developers and builders.</p>
+            <Link to="/submit" className="block w-full bg-white text-primary font-bold py-3 rounded-lg text-sm hover:bg-opacity-90 transition-all">
+              Submit a Listing
+            </Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

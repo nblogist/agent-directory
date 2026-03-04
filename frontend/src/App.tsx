@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Layout from './components/layout/Layout';
 import HomePage from './pages/HomePage';
@@ -9,7 +9,6 @@ import NotFoundPage from './pages/NotFoundPage';
 // Admin imports
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminListings from './pages/admin/AdminListings';
 import AdminEditListing from './pages/admin/AdminEditListing';
 import { AdminGuard } from './components/admin/AdminGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -35,7 +34,7 @@ export default function App() {
           <Route element={<AdminGuard />}>
             <Route element={<AdminLayout />}>
               <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/listings" element={<AdminListings />} />
+              <Route path="/admin/listings" element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="/admin/listings/:id" element={<AdminEditListing />} />
             </Route>
           </Route>

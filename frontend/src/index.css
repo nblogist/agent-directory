@@ -23,7 +23,7 @@
 
 /* Neon glow effect for hero text */
 .neon-glow {
-  text-shadow: 0 0 10px rgba(55, 19, 236, 0.5);
+  text-shadow: 0 0 10px rgba(55, 19, 236, 0.5), 0 0 20px rgba(55, 19, 236, 0.3);
 }
 
 /* Glass card utility */
@@ -34,10 +34,37 @@
 
 /* Material Symbols rendering fixes */
 .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
   font-variation-settings:
     'FILL' 0,
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
   user-select: none;
+}
+
+/* Custom scrollbar for sidebar and content areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #2b2839;
+  border-radius: 10px;
 }

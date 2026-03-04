@@ -2,8 +2,11 @@ import { API_BASE_URL } from './constants';
 import type {
   PublicListing,
   Category,
+  CategoryRef,
   Tag,
   Chain,
+  ChainRef,
+  ChainSuggestion,
   PaginatedResponse,
   ListingsQuery,
   NewListingPayload,
@@ -130,14 +133,48 @@ export const api = {
           body: JSON.stringify({ note: note ?? null }),
         }),
 
-      update: (token: string, id: string, data: Partial<AdminListing>): Promise<AdminListing> =>
-        adminFetch<AdminListing>(token, `/api/admin/listings/${id}`, {
+      update: (token: string, id: string, data: Record<string, unknown>): Promise<AdminListingDetail> =>
+        adminFetch<AdminListingDetail>(token, `/api/admin/listings/${id}`, {
           method: 'PATCH',
           body: JSON.stringify(data),
         }),
 
       delete: (token: string, id: string): Promise<void> =>
         adminFetch<void>(token, `/api/admin/listings/${id}`, { method: 'DELETE' }),
+
+      toggleFeatured: (token: string, id: string): Promise<AdminListing> =>
+        adminFetch<AdminListing>(token, `/api/admin/listings/${id}/toggle-featured`, { method: 'POST' }),
+    },
+
+    categories: {
+      create: (token: string, name: string): Promise<CategoryRef> =>
+        adminFetch<CategoryRef>(token, '/api/admin/categories', {
+          method: 'POST',
+          body: JSON.stringify({ name }),
+        }),
+    },
+
+    chains: {
+      create: (token: string, name: string, is_featured = false): Promise<ChainRef> =>
+        adminFetch<ChainRef>(token, '/api/admin/chains', {
+          method: 'POST',
+          body: JSON.stringify({ name, is_featured }),
+        }),
+    },
+
+    chainSuggestions: {
+      list: (token: string, status?: string): Promise<ChainSuggestion[]> => {
+        const p = new URLSearchParams();
+        if (status) p.set('status', status);
+        const qs = p.toString();
+        return adminFetch<ChainSuggestion[]>(token, `/api/admin/chain-suggestions${qs ? `?${qs}` : ''}`);
+      },
+
+      approve: (token: string, id: string): Promise<ChainRef> =>
+        adminFetch<ChainRef>(token, `/api/admin/chain-suggestions/${id}/approve`, { method: 'POST' }),
+
+      reject: (token: string, id: string): Promise<void> =>
+        adminFetch<void>(token, `/api/admin/chain-suggestions/${id}/reject`, { method: 'POST' }),
     },
   },
 };

@@ -1,259 +1,211 @@
 import { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import toast, { Toaster } from 'react-hot-toast';
-import { api, ApiError } from '../../lib/api';
+import { Link } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '../../lib/api';
 import { useAdminStore } from '../../lib/adminStore';
-import type { ListingStatus, AdminListing } from '../../types/api';
+import type { ListingStatus } from '../../types/api';
 
-const STATUS_TABS: { label: string; value: ListingStatus | 'all' }[] = [
-  { label: 'All', value: 'all' },
+const STATUS_STYLES: Record<string, string> = {
+  pending: 'bg-amber-900/30 text-amber-400',
+  approved: 'bg-green-900/30 text-green-400',
+  rejected: 'bg-red-900/30 text-red-400',
+};
+
+const TABS: { label: string; value: ListingStatus | undefined }[] = [
+  { label: 'All Submissions', value: undefined },
   { label: 'Pending', value: 'pending' },
   { label: 'Approved', value: 'approved' },
   { label: 'Rejected', value: 'rejected' },
 ];
 
-const toastStyle = { style: { background: '#1d1c27', color: '#fff', border: '1px solid #2b2839' } };
-
-function StatusBadge({ status }: { status: ListingStatus }) {
-  const styles: Record<ListingStatus, string> = {
-    pending: 'bg-amber-400/20 text-amber-400',
-    approved: 'bg-emerald-500/20 text-emerald-400',
-    rejected: 'bg-red-500/20 text-red-400',
-  };
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${styles[status]}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-}
-
 export default function AdminListings() {
-  const token = useAdminStore((s) => s.token)!;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const token = useAdminStore(s => s.token)!;
   const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] = useState<ListingStatus | undefined>(undefined);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
-  const statusParam = searchParams.get('status') as ListingStatus | null;
-  const activeStatus = statusParam ?? 'all';
-
-  // Reject modal state
-  const [rejectingId, setRejectingId] = useState<string | null>(null);
-  const [rejectNote, setRejectNote] = useState('');
-  const [rejectLoading, setRejectLoading] = useState(false);
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['admin', 'listings', activeStatus],
-    queryFn: () =>
-      api.admin.listings.list(token, {
-        status: activeStatus === 'all' ? undefined : activeStatus,
-        per_page: 100,
-      }),
-    staleTime: 1000 * 30,
+  const { data, isLoading } = useQuery({
+    queryKey: ['adminListings', statusFilter, search, page],
+    queryFn: () => api.admin.listings.list(token, { status: statusFilter, search: search || undefined, page, per_page: 20 }),
   });
 
-  function setStatusFilter(value: ListingStatus | 'all') {
-    if (value === 'all') {
-      setSearchParams({});
-    } else {
-      setSearchParams({ status: value });
-    }
-  }
+  const listings = data?.data ?? [];
+  const meta = data?.meta ?? { page: 1, per_page: 20, total: 0, total_pages: 0 };
 
-  async function handleApprove(id: string) {
-    try {
-      await api.admin.listings.approve(token, id);
-      toast.success('Listing approved', toastStyle);
-      queryClient.invalidateQueries({ queryKey: ['admin', 'listings'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Approval failed';
-      toast.error(msg, toastStyle);
-    }
-  }
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => api.admin.listings.approve(token, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminListings'] }),
+  });
 
-  async function handleRejectConfirm() {
-    if (!rejectingId) return;
-    setRejectLoading(true);
-    try {
-      await api.admin.listings.reject(token, rejectingId, rejectNote.trim() || undefined);
-      toast.success('Listing rejected', toastStyle);
-      queryClient.invalidateQueries({ queryKey: ['admin', 'listings'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
-      setRejectingId(null);
-      setRejectNote('');
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Rejection failed';
-      toast.error(msg, toastStyle);
-    } finally {
-      setRejectLoading(false);
-    }
-  }
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => api.admin.listings.reject(token, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminListings'] }),
+  });
 
-  async function handleDelete(id: string, name: string) {
-    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
-    try {
-      await api.admin.listings.delete(token, id);
-      toast.success('Listing deleted', toastStyle);
-      queryClient.invalidateQueries({ queryKey: ['admin', 'listings'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
-    } catch (err) {
-      const msg = err instanceof ApiError ? err.message : 'Delete failed';
-      toast.error(msg, toastStyle);
-    }
-  }
-
-  const listings: AdminListing[] = data?.data ?? [];
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.admin.listings.delete(token, id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminListings'] }),
+  });
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Listings</h1>
-          <p className="text-gray-400 text-sm mt-1">Manage all directory submissions</p>
-        </div>
+    <div className="p-8">
+      <div className="mb-8">
+        <h2 className="text-3xl font-black tracking-tight mb-2">Submissions Management</h2>
+        <p className="text-slate-400">Review and moderate listing submissions for the directory.</p>
+      </div>
 
-        {/* Filter tabs */}
-        <div className="flex flex-wrap gap-1 mb-6 bg-dark-surface border border-dark-border rounded-lg p-1 w-fit">
-          {STATUS_TABS.map((tab) => (
-            <button
-              key={tab.value}
-              onClick={() => setStatusFilter(tab.value)}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeStatus === tab.value
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      <div className="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden">
+        {/* Tabs + Search */}
+        <div className="px-6 py-4 border-b border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex gap-4">
+            {TABS.map(tab => (
+              <button
+                key={tab.label}
+                onClick={() => { setStatusFilter(tab.value); setPage(1); }}
+                className={`text-sm pb-4 -mb-[18px] ${
+                  statusFilter === tab.value
+                    ? 'font-bold text-primary border-b-2 border-primary'
+                    : 'font-medium text-slate-400'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="relative">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input
+              className="pl-9 pr-4 py-1.5 bg-slate-800/50 border-none rounded-lg text-sm focus:ring-1 focus:ring-primary w-64"
+              placeholder="Search listings..."
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+            />
+          </div>
         </div>
 
         {/* Table */}
-        <div className="bg-dark-surface border border-dark-border rounded-xl overflow-hidden">
-          {isLoading ? (
-            <div className="p-8 text-center text-gray-500 text-sm">Loading...</div>
-          ) : isError ? (
-            <div className="p-8 text-center text-red-400 text-sm">Failed to load listings</div>
-          ) : listings.length === 0 ? (
-            <div className="p-10 text-center text-gray-500 text-sm">No listings found</div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-dark-border">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-800/30 text-slate-400 uppercase text-[10px] font-bold tracking-widest">
+                <th className="px-6 py-4">Listing Name</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Date</th>
+                <th className="px-6 py-4">Views</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800">
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4"><div className="h-4 w-32 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-20 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-10 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 bg-slate-800 rounded ml-auto" /></td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-dark-border">
-                  {listings.map((listing) => (
-                    <tr key={listing.id} className="hover:bg-white/[0.02] transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-white">{listing.name}</div>
-                        <div className="text-xs text-gray-500 font-mono mt-0.5">{listing.slug}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <StatusBadge status={listing.status} />
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-400">
-                        {new Date(listing.submitted_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-white text-right">
-                        {listing.view_count.toLocaleString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-2">
-                          {listing.status === 'pending' && (
-                            <>
-                              <button
-                                onClick={() => handleApprove(listing.id)}
-                                title="Approve"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors"
-                              >
-                                <span className="material-symbols-outlined text-[16px]">check</span>
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => { setRejectingId(listing.id); setRejectNote(''); }}
-                                title="Reject"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-                              >
-                                <span className="material-symbols-outlined text-[16px]">close</span>
-                                Reject
-                              </button>
-                            </>
-                          )}
+                ))
+              ) : listings.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center text-slate-500">No listings found.</td>
+                </tr>
+              ) : (
+                listings.map(row => (
+                  <tr key={row.id} className="hover:bg-slate-800/20 transition-colors">
+                    <td className="px-6 py-4">
+                      <Link to={`/admin/listings/${row.id}`} className="hover:text-primary transition-colors">
+                        <p className="font-bold text-sm">{row.name}</p>
+                        <p className="text-[11px] text-slate-400 line-clamp-1">{row.short_description}</p>
+                      </Link>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${STATUS_STYLES[row.status] ?? ''}`}>
+                        {row.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-slate-400">
+                      {new Date(row.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-medium">{row.view_count}</td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex justify-end gap-2">
+                        {row.status !== 'approved' && (
                           <button
-                            onClick={() => navigate(`/admin/listings/${listing.id}`)}
-                            title="Edit"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white/[0.05] text-gray-300 hover:bg-white/[0.08] transition-colors"
+                            onClick={() => approveMutation.mutate(row.id)}
+                            disabled={approveMutation.isPending}
+                            className="text-xs font-bold text-emerald-500 hover:underline disabled:opacity-50"
                           >
-                            <span className="material-symbols-outlined text-[16px]">edit</span>
-                            Edit
+                            Approve
                           </button>
+                        )}
+                        {row.status !== 'rejected' && (
                           <button
-                            onClick={() => handleDelete(listing.id, listing.name)}
-                            title="Delete"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
+                            onClick={() => rejectMutation.mutate(row.id)}
+                            disabled={rejectMutation.isPending}
+                            className="text-xs font-bold text-red-500 hover:underline disabled:opacity-50"
                           >
-                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            Reject
                           </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                        )}
+                        <Link to={`/admin/listings/${row.id}`} className="text-xs font-bold text-slate-400 hover:text-slate-200">
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => { if (confirm('Delete this listing permanently?')) deleteMutation.mutate(row.id); }}
+                          disabled={deleteMutation.isPending}
+                          className="text-xs font-bold text-slate-500 hover:text-red-400 disabled:opacity-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-slate-800 flex items-center justify-between">
+          <p className="text-xs text-slate-400">
+            {meta.total > 0
+              ? `Showing ${(meta.page - 1) * meta.per_page + 1} to ${Math.min(meta.page * meta.per_page, meta.total)} of ${meta.total} entries`
+              : 'No entries'}
+          </p>
+          {meta.total_pages > 1 && (
+            <div className="flex gap-1">
+              <button
+                disabled={meta.page <= 1}
+                onClick={() => setPage(p => p - 1)}
+                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30"
+              >
+                Previous
+              </button>
+              {Array.from({ length: Math.min(meta.total_pages, 5) }).map((_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setPage(i + 1)}
+                  className={`p-1 px-3 rounded text-xs font-bold ${
+                    meta.page === i + 1 ? 'bg-primary text-white' : 'border border-slate-800 hover:bg-slate-800'
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+              <button
+                disabled={meta.page >= meta.total_pages}
+                onClick={() => setPage(p => p + 1)}
+                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30"
+              >
+                Next
+              </button>
             </div>
           )}
         </div>
       </div>
-
-      {/* Reject modal */}
-      {rejectingId && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-          <div className="bg-dark-surface border border-dark-border rounded-xl p-6 w-full max-w-md">
-            <h3 className="text-base font-semibold text-white mb-1">Reject Listing</h3>
-            <p className="text-sm text-gray-400 mb-4">Optionally provide a rejection note for your records.</p>
-            <textarea
-              value={rejectNote}
-              onChange={(e) => setRejectNote(e.target.value)}
-              placeholder="Rejection reason (optional)"
-              rows={3}
-              className="w-full bg-dark-bg border border-dark-border focus:border-primary rounded-lg px-4 py-2.5 text-white placeholder:text-gray-600 focus:outline-none transition-colors text-sm resize-none"
-            />
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                onClick={() => { setRejectingId(null); setRejectNote(''); }}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 hover:text-white bg-white/[0.05] hover:bg-white/[0.08] transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleRejectConfirm}
-                disabled={rejectLoading}
-                className="px-4 py-2 rounded-lg text-sm font-medium bg-red-500/20 text-red-400 hover:bg-red-500/30 disabled:opacity-50 transition-colors"
-              >
-                {rejectLoading ? 'Rejecting...' : 'Confirm Reject'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          style: { background: '#1d1c27', color: '#fff', border: '1px solid #2b2839' },
-          error: { iconTheme: { primary: '#f87171', secondary: '#1d1c27' } },
-        }}
-      />
     </div>
   );
 }

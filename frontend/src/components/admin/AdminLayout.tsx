@@ -1,117 +1,103 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAdminStore } from '../../lib/adminStore';
 import { APP_NAME } from '../../lib/constants';
 
 export function AdminLayout() {
   const clearToken = useAdminStore((s) => s.clearToken);
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchInput, setSearchInput] = useState(searchParams.get('search') ?? '');
 
   function handleLogout() {
     clearToken();
     navigate('/admin', { replace: true });
   }
 
-  function handleNavClick() {
-    setSidebarOpen(false);
-  }
-
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-dark-bg">
-      {/* Mobile header bar — hidden on md+ */}
-      <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-dark-surface border-b border-dark-border shrink-0">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          aria-label="Open menu"
-          className="text-gray-400 hover:text-white transition-colors"
-        >
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <span className="text-lg font-bold text-white">{APP_NAME}</span>
-        <span className="text-xs text-gray-500 font-medium">Admin</span>
-      </div>
-
-      {/* Backdrop — shown on mobile when sidebar is open */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
+    <div className="flex h-screen overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Sidebar */}
-      <aside
-        className={`
-          fixed inset-y-0 left-0 z-40 w-64 bg-dark-surface border-r border-dark-border flex flex-col
-          transform transition-transform duration-200 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-          md:relative md:translate-x-0 md:transform-none md:shrink-0
-        `}
-      >
-        {/* Brand */}
-        <div className="px-6 py-5 border-b border-dark-border flex items-center justify-between">
-          <div>
-            <span className="text-lg font-bold text-white">{APP_NAME}</span>
-            <span className="ml-2 text-xs text-gray-500 font-medium">Admin</span>
+      <aside className="w-64 flex-shrink-0 border-r border-slate-800 bg-dark-bg flex flex-col">
+        <div className="p-6 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
+            <span className="material-symbols-outlined">radar</span>
           </div>
-          {/* Close button — visible only on mobile */}
-          <button
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Close menu"
-            className="md:hidden text-gray-400 hover:text-white transition-colors"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
+          <div>
+            <h1 className="font-bold text-lg leading-tight">{APP_NAME}</h1>
+            <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Admin Console</p>
+          </div>
         </div>
-
-        {/* Nav links */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          <NavLink
-            to="/admin/dashboard"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`
-            }
-          >
-            <span className="material-symbols-outlined text-[20px]">dashboard</span>
-            Dashboard
-          </NavLink>
-
-          <NavLink
-            to="/admin/listings"
-            onClick={handleNavClick}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary/20 text-primary'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
-              }`
-            }
-          >
-            <span className="material-symbols-outlined text-[20px]">list_alt</span>
-            Listings
+        <nav className="flex-1 px-4 space-y-1">
+          <NavLink to="/admin/dashboard" end className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-slate-400 hover:bg-slate-800'}`}>
+            <span className="material-symbols-outlined">dashboard</span>
+            <span className="text-sm font-medium">Dashboard</span>
           </NavLink>
         </nav>
-
-        {/* Logout */}
-        <div className="px-3 py-4 border-t border-dark-border">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:text-red-400 hover:bg-red-400/5 transition-colors"
-          >
-            <span className="material-symbols-outlined text-[20px]">logout</span>
+        <div className="p-4 border-t border-slate-800 space-y-2">
+          <a href="/submit" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-2.5 rounded-lg transition-all text-sm">
+            <span className="material-symbols-outlined text-sm">add</span>
+            New Listing
+          </a>
+          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-red-400 hover:bg-red-400/5 py-2 rounded-lg transition-colors text-sm font-medium">
+            <span className="material-symbols-outlined text-sm">logout</span>
             Logout
           </button>
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 min-w-0 overflow-auto">
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto bg-dark-bg">
+        <header className="h-16 border-b border-slate-800 bg-dark-bg/50 backdrop-blur-md flex items-center justify-between px-8 sticky top-0 z-10">
+          <div className="flex items-center flex-1 max-w-xl">
+            <form onSubmit={e => {
+              e.preventDefault();
+              const q = searchInput.trim();
+              setSearchParams(prev => {
+                const next = new URLSearchParams(prev);
+                if (q) { next.set('search', q); } else { next.delete('search'); }
+                next.delete('page');
+                return next;
+              });
+            }} className="relative w-full">
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+              <input
+                className="w-full pl-10 pr-10 py-2 bg-slate-800/50 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm"
+                placeholder="Search submissions, agents, or authors..."
+                type="text"
+                value={searchInput}
+                onChange={e => {
+                  setSearchInput(e.target.value);
+                  if (!e.target.value.trim()) {
+                    setSearchParams(prev => { const n = new URLSearchParams(prev); n.delete('search'); n.delete('page'); return n; });
+                  }
+                }}
+              />
+              {searchInput && (
+                <button type="button" onClick={() => {
+                  setSearchInput('');
+                  setSearchParams(prev => { const n = new URLSearchParams(prev); n.delete('search'); n.delete('page'); return n; });
+                }} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              )}
+            </form>
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-slate-500 hover:bg-slate-800 rounded-full relative">
+              <span className="material-symbols-outlined">notifications</span>
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-dark-bg"></span>
+            </button>
+            <div className="flex items-center gap-3 pl-4 border-l border-slate-800">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-bold leading-none">Admin User</p>
+                <p className="text-xs text-slate-400">System Manager</p>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center overflow-hidden">
+                <img alt="User Avatar" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0weBOjwDjXBXxC03YQ5chgfQHCa3khkvYfYHxe7GbjS2eDJ2EKCKrqaGgo2ZtIWkPrcPHkvXPzyZwCfLFrsb2r5l1FEVIf68nCjFaCSheHRfaQUJ4d5bWE3dDlU2WvCNNYC5sxVx8I9amilkzS1QEbLraL93FzPN7zvmq5xrok98WorK1cu-HNwunROzdQNhBT2D-Mj2IypoZpMpXvN4lNiTx-N1hfQMOYp1T14OLZNpp89fMvPwEoVN2YxNt3N4ZFa3ioz_BVvQ" />
+              </div>
+            </div>
+          </div>
+        </header>
         <Outlet />
       </main>
     </div>

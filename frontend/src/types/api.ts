@@ -32,6 +32,7 @@ export interface PublicListing {
   docs_url: string | null;
   api_endpoint_url: string | null;
   reputation_score: number | null;
+  is_featured: boolean;
   view_count: number;
   submitted_at: string;     // ISO date string
   approved_at: string | null;
@@ -100,6 +101,16 @@ export interface NewListingPayload {
   categories: string[];  // UUID strings
   tags: string[];
   chains: string[];      // UUID strings
+  suggested_chains?: string[];  // User-suggested chain names
+}
+
+export interface ChainSuggestion {
+  id: string;
+  name: string;
+  listing_id: string;
+  status: string;
+  created_at: string;
+  reviewed_at: string | null;
 }
 
 export interface SubmitResponse {
@@ -127,6 +138,7 @@ export interface AdminListing {
   contact_email: string;
   status: ListingStatus;
   rejection_note: string | null;
+  is_featured: boolean;
   reputation_score: number | null;
   view_count: number;
   submitted_at: string;

@@ -1,38 +1,203 @@
-import { useEffect } from 'react';
-import HeroSection from '../components/home/HeroSection';
-import LeaderboardTable from '../components/home/LeaderboardTable';
-import StatsBar from '../components/home/StatsBar';
-import { APP_NAME } from '../lib/constants';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { fetchListings, fetchCategories } from '../lib/api';
+import { getCategoryColor } from '../lib/categoryColors';
+import ListingLogo from '../components/ListingLogo';
 
-/**
- * HomePage — the public landing page.
- *
- * Sections (top to bottom, matching homepage_2 design):
- *   1. HeroSection    — badge, h1, subtitle, large search bar, trending category pills
- *   2. LeaderboardTable — top 5 agents ranked by view count from /api/listings?sort=views&per_page=5
- *   3. StatsBar       — 4-stat grid (total agents, views, categories, chains) from real API
- *
- * All data fetching is handled independently by each child component via TanStack Query.
- * This component is responsible only for composition and page-level concerns (title, structure).
- */
 export default function HomePage() {
-  useEffect(() => {
-    document.title = `${APP_NAME} — Discover the Best AI Agents`;
-    return () => {
-      document.title = APP_NAME;
-    };
-  }, []);
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
+
+  const { data: listingsRes, isLoading: listingsLoading } = useQuery({
+    queryKey: ['topListings'],
+    queryFn: () => fetchListings({ sort: 'views', per_page: 6 }),
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
+  const topListings = listingsRes?.data ?? [];
+
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/browse?search=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  }
 
   return (
-    <div className="w-full">
-      {/* Hero: badge, headline, search, trending pills */}
-      <HeroSection />
+    <>
+      {/* ── Hero Section ────────────────────────────────────── */}
+      <section className="relative px-6 py-16 lg:py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(55,19,236,0.1),transparent)] pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-6 border border-primary/20">
+            The Next Evolution of AI
+          </span>
 
-      {/* Top agents leaderboard */}
-      <LeaderboardTable />
+          <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-8 neon-glow">
+            Discover the Best <span className="text-primary italic">AI-First Tools & Infrastructure</span>
+          </h1>
 
-      {/* Platform stats bar */}
-      <StatsBar />
-    </div>
+          <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
+            Track, analyze, and discover the most popular AI agents across the decentralized web. The leading directory for the agentic economy.
+          </p>
+
+          {/* Search bar */}
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto bg-dark-surface p-2 rounded-xl shadow-2xl border border-primary/20 flex items-center gap-2">
+            <div className="flex-1 flex items-center px-4 gap-3">
+              <span className="material-symbols-outlined text-slate-400">search</span>
+              <input
+                className="w-full bg-transparent border-none focus:ring-0 text-white placeholder:text-slate-500 outline-none"
+                placeholder="Search tools, services, platforms..."
+                type="text"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <button type="submit" className="bg-primary text-white px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95">
+              Explore
+            </button>
+          </form>
+
+          {/* Trending pills — real categories */}
+          <div className="flex flex-wrap justify-center gap-3 mt-10">
+            <span className="text-sm font-medium text-slate-500 mr-2 self-center">Trending:</span>
+            {(categories ?? []).slice(0, 5).map(cat => (
+              <Link
+                key={cat.slug}
+                to={`/browse?category=${cat.slug}`}
+                className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-sm transition-all duration-300 ease-out hover:scale-[1.05] hover:bg-primary hover:text-white hover:border-primary hover:shadow-[0_0_15px_rgba(55,19,236,0.3)] active:scale-95"
+              >
+                {cat.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Top Listings Table ─────────────────────────────── */}
+      <section className="max-w-[1440px] mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+          <div>
+            <h2 className="text-3xl font-bold mb-2">Top Listings</h2>
+            <p className="text-slate-500">The most viewed tools and services in the directory.</p>
+          </div>
+        </div>
+
+        <div className="w-full overflow-x-auto rounded-xl border border-primary/20 bg-dark-surface shadow-xl">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-primary/5 border-b border-primary/20">
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tool</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Views</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Reputation</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-primary/10">
+              {listingsLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-lg bg-slate-800" />
+                        <div className="space-y-2">
+                          <div className="h-4 w-32 bg-slate-800 rounded" />
+                          <div className="h-3 w-20 bg-slate-800/60 rounded" />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-5"><div className="h-4 w-20 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-5"><div className="h-4 w-12 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-5"><div className="h-4 w-10 bg-slate-800 rounded" /></td>
+                    <td className="px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded ml-auto" /></td>
+                  </tr>
+                ))
+              ) : topListings.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                    No listings yet. Be the first to <Link to="/submit" className="text-primary hover:underline">submit one</Link>!
+                  </td>
+                </tr>
+              ) : (
+                topListings.map((listing, idx) => {
+                  const primaryCat = listing.categories[0];
+                  const catColor = primaryCat ? getCategoryColor(primaryCat.slug) : { bg: 'bg-slate-500/10', text: 'text-slate-400' };
+
+                  return (
+                    <tr
+                      key={listing.id}
+                      className="hover:bg-primary/5 transition-colors cursor-pointer group"
+                      onClick={() => navigate(`/agents/${listing.slug}`)}
+                    >
+                      <td className="px-6 py-5 font-bold text-slate-400">{idx + 1}</td>
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <ListingLogo name={listing.name} logoUrl={listing.logo_url} />
+                          <div>
+                            <div className="font-bold text-lg group-hover:text-primary transition-colors text-white">
+                              {listing.name}
+                            </div>
+                            <div className="text-xs text-slate-500 line-clamp-1 max-w-xs">
+                              {listing.short_description}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-5">
+                        {primaryCat ? (
+                          <span className={`${catColor.bg} ${catColor.text} text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded`}>
+                            {primaryCat.name}
+                          </span>
+                        ) : (
+                          <span className="text-slate-500 text-sm">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-5 font-medium">
+                        {listing.view_count >= 1000
+                          ? `${(listing.view_count / 1000).toFixed(1)}k`
+                          : listing.view_count}
+                      </td>
+                      <td className="px-6 py-5">
+                        {listing.reputation_score != null ? (
+                          <span className="text-primary text-sm font-medium">{listing.reputation_score}</span>
+                        ) : (
+                          <span className="text-slate-500 text-sm">N/A</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-5 text-right">
+                        <Link
+                          to={`/agents/${listing.slug}`}
+                          className="text-primary hover:text-accent transition-colors"
+                          onClick={e => e.stopPropagation()}
+                        >
+                          <span className="material-symbols-outlined">chevron_right</span>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-8 text-center">
+          <Link
+            to="/browse"
+            className="inline-block bg-primary/10 border border-primary/20 text-primary px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95"
+          >
+            View All Listings
+          </Link>
+        </div>
+      </section>
+    </>
   );
 }
