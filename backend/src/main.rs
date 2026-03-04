@@ -116,41 +116,6 @@ fn not_found_catcher() -> Json<ErrorBody> {
 }
 
 // ---------------------------------------------------------------------------
-// Admin token seeding — on first boot
-// ---------------------------------------------------------------------------
-
-async fn seed_admin_token(pool: &crate::db::DbPool) {
-    let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM admin_tokens")
-        .fetch_one(pool)
-        .await
-        .unwrap_or(0);
-
-    if count == 0 {
-        let raw_token = std::env::var("ADMIN_TOKEN")
-            .expect("ADMIN_TOKEN env var must be set. Refusing to start with default token.");
-        match bcrypt::hash(&raw_token, bcrypt::DEFAULT_COST) {
-            Ok(hashed) => {
-                if let Err(e) = sqlx::query(
-                    "INSERT INTO admin_tokens (id, token_hash, label, created_at) \
-                     VALUES (gen_random_uuid(), $1, 'default', now())"
-                )
-                .bind(&hashed)
-                .execute(pool)
-                .await
-                {
-                    tracing::error!("Failed to seed admin token: {}", e);
-                } else {
-                    tracing::info!("Admin token seeded into admin_tokens table");
-                }
-            }
-            Err(e) => {
-                tracing::error!("Failed to hash admin token: {}", e);
-            }
-        }
-    }
-}
-
-// ---------------------------------------------------------------------------
 // Rocket launch
 // ---------------------------------------------------------------------------
 
@@ -170,9 +135,6 @@ async fn rocket() -> _ {
         .run(&pool)
         .await
         .expect("Failed to run migrations");
-
-    // Seed admin token on first boot
-    seed_admin_token(&pool).await;
 
     // CORS: read allowed origin from env, fallback to localhost dev default
     let frontend_url = std::env::var("FRONTEND_URL")

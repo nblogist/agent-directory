@@ -11,7 +11,6 @@ serde_json = "1"
 uuid = { version = "1", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 tokio = { version = "1", features = ["full"] }
-bcrypt = "0.15"
 slug = "0.1"
 regex = "1"
 governor = "0.6"
