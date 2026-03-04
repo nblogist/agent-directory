@@ -115,6 +115,30 @@ fn not_found_catcher() -> Json<ErrorBody> {
     })
 }
 
+#[catch(400)]
+fn bad_request_catcher() -> Json<ErrorBody> {
+    Json(ErrorBody {
+        error: "Bad request".to_string(),
+        code: "BAD_REQUEST".to_string(),
+    })
+}
+
+#[catch(422)]
+fn unprocessable_catcher() -> Json<ErrorBody> {
+    Json(ErrorBody {
+        error: "Request body could not be parsed. Ensure Content-Type is application/json and the body is valid JSON with all required fields.".to_string(),
+        code: "UNPROCESSABLE".to_string(),
+    })
+}
+
+#[catch(500)]
+fn internal_error_catcher() -> Json<ErrorBody> {
+    Json(ErrorBody {
+        error: "Internal server error".to_string(),
+        code: "INTERNAL_ERROR".to_string(),
+    })
+}
+
 // ---------------------------------------------------------------------------
 // Rocket launch
 // ---------------------------------------------------------------------------
@@ -154,6 +178,9 @@ async fn rocket() -> _ {
             unauthorized_catcher,
             rate_limit_catcher,
             not_found_catcher,
+            bad_request_catcher,
+            unprocessable_catcher,
+            internal_error_catcher,
         ])
         .mount("/api", routes![
             options_handler,

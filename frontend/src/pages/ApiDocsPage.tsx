@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { APP_NAME, API_BASE_URL } from '../lib/constants';
+import { APP_NAME } from '../lib/constants';
 
-const baseUrl = API_BASE_URL || window.location.origin;
+// For display purposes, always show the user-facing origin (not the backend URL).
+// In production, the frontend domain serves /api via reverse proxy or same-origin.
+const baseUrl = window.location.origin;
 
 function Endpoint({ method, path, description, params, body, response, rateLimit }: {
   method: 'GET' | 'POST' | 'PATCH';
@@ -157,15 +159,18 @@ export default function ApiDocsPage() {
   "description": "Full markdown...",
   "logo_url": "https://...",
   "website_url": "https://...",
+  "github_url": "https://github.com/...",
+  "docs_url": "https://...",
+  "api_endpoint_url": "https://...",
   "reputation_score": null,
   "is_featured": false,
   "view_count": 43,
   "submitted_at": "2025-01-01T00:00:00Z",
   "updated_at": "2025-01-02T00:00:00Z",
   "approved_at": "2025-01-01T12:00:00Z",
-  "categories": [...],
-  "tags": [...],
-  "chains": [...]
+  "categories": [{ "id": "uuid", "name": "...", "slug": "..." }],
+  "tags": [{ "id": "uuid", "name": "...", "slug": "..." }],
+  "chains": [{ "id": "uuid", "name": "...", "slug": "...", "is_featured": true }]
 }`}
           />
 
@@ -234,6 +239,14 @@ export default function ApiDocsPage() {
 ]`}
           />
 
+        </div>
+      </section>
+
+      {/* Authenticated Endpoints */}
+      <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">Authenticated Endpoints</h2>
+        <p className="text-slate-400 text-sm mb-6">These endpoints require an <code className="text-primary font-mono text-xs">Authorization: Bearer &lt;token&gt;</code> header.</p>
+        <div className="space-y-6">
           <Endpoint
             method="PATCH"
             path="/api/listings/:id/reputation"
@@ -254,17 +267,18 @@ export default function ApiDocsPage() {
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Error Responses</h2>
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          <p className="text-sm text-slate-400 mb-4">All errors return a consistent JSON format:</p>
+          <p className="text-sm text-slate-400 mb-4">All errors return a consistent JSON format. POST/PATCH requests must include <code className="text-primary font-mono text-xs">Content-Type: application/json</code>.</p>
           <pre className="bg-slate-950 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">{`{
-  "error": "Not Found",
-  "message": "The requested resource was not found"
+  "error": "Not found",
+  "code": "NOT_FOUND"
 }`}</pre>
           <div className="mt-4 space-y-2 text-sm">
-            <div className="flex gap-4"><code className="text-amber-400 w-8">400</code><span className="text-slate-400">Validation error (bad request body or params)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">401</code><span className="text-slate-400">Unauthorized (missing or invalid admin token)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">404</code><span className="text-slate-400">Resource not found</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">429</code><span className="text-slate-400">Rate limit exceeded</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">500</code><span className="text-slate-400">Internal server error</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">400</code><span className="text-slate-400">Malformed JSON body (<code className="text-slate-500">BAD_REQUEST</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">401</code><span className="text-slate-400">Unauthorized — missing or invalid admin token (<code className="text-slate-500">UNAUTHORIZED</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">404</code><span className="text-slate-400">Resource not found (<code className="text-slate-500">NOT_FOUND</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">422</code><span className="text-slate-400">Validation error or missing Content-Type header (<code className="text-slate-500">VALIDATION</code> / <code className="text-slate-500">UNPROCESSABLE</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">429</code><span className="text-slate-400">Rate limit exceeded — includes <code className="text-slate-500">Retry-After</code> header (<code className="text-slate-500">RATE_LIMIT</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">500</code><span className="text-slate-400">Internal server error (<code className="text-slate-500">DB_ERROR</code>)</span></div>
           </div>
         </div>
       </section>
