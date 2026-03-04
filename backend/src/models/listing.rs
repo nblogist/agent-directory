@@ -46,6 +46,7 @@ pub struct PublicListing {
     pub is_featured: bool,
     pub view_count: i32,
     pub submitted_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
     pub approved_at: Option<DateTime<Utc>>,
     pub categories: Vec<CategoryRef>,
     pub tags: Vec<TagRef>,

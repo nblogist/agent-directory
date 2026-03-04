@@ -569,7 +569,7 @@ export default function AdminEditListing() {
             <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider mb-3">Quick Actions</h3>
             <div className="space-y-2">
               <a
-                href={`/agents/${listing.slug}`}
+                href={`/listings/${listing.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition-colors"

@@ -79,7 +79,14 @@ export default function ListingDetailPage() {
             />
           </div>
           <div>
-            <h1 className="text-white text-4xl font-bold tracking-tight mb-2">{listing.name}</h1>
+            <h1 className="text-white text-4xl font-bold tracking-tight mb-2">
+              {listing.name}
+              {listing.is_featured && (
+                <span className="ml-3 align-middle inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-xs font-bold">
+                  <span className="material-symbols-outlined text-sm">star</span> Featured
+                </span>
+              )}
+            </h1>
             <p className="text-slate-400 text-lg mb-4">{listing.short_description}</p>
             <div className="flex flex-wrap gap-2">
               {listing.categories.map(cat => {
@@ -194,15 +201,31 @@ export default function ListingDetailPage() {
                 {listing.reputation_score != null ? (
                   <span className="text-sm font-bold text-primary">{listing.reputation_score}</span>
                 ) : (
-                  <span className="text-sm text-slate-500">N/A</span>
+                  <span className="text-sm text-slate-500" title="Reputation scoring coming soon.">N/A</span>
                 )}
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-500">Listed</span>
+                <span className="text-sm text-slate-500">Submitted</span>
                 <span className="text-sm text-slate-300">
                   {new Date(listing.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </span>
               </div>
+              {listing.approved_at && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">Approved</span>
+                  <span className="text-sm text-slate-300">
+                    {new Date(listing.approved_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+              )}
+              {listing.updated_at && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">Updated</span>
+                  <span className="text-sm text-slate-300">
+                    {new Date(listing.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+              )}
               {listing.api_endpoint_url && (
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-slate-500">API</span>

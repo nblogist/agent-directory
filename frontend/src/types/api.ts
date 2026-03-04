@@ -35,6 +35,7 @@ export interface PublicListing {
   is_featured: boolean;
   view_count: number;
   submitted_at: string;     // ISO date string
+  updated_at: string;        // ISO date string
   approved_at: string | null;
   categories: CategoryRef[];
   tags: TagRef[];

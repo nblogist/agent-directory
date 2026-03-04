@@ -132,7 +132,7 @@ pub async fn admin_list_listings(
         let s = search.trim();
         if !s.is_empty() {
             where_clauses.push(format!(
-                "(name ILIKE ${p} OR short_description ILIKE ${p})",
+                "(name ILIKE ${p} OR short_description ILIKE ${p} OR slug ILIKE ${p})",
                 p = param_idx
             ));
             let escaped = s.replace('\\', "\\\\").replace('%', "\\%").replace('_', "\\_");

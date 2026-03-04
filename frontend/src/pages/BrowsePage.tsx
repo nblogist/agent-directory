@@ -134,7 +134,7 @@ export default function BrowsePage() {
             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
             <input
               type="text"
-              placeholder="Search agents by name or description..."
+              placeholder="Search listings by name or description..."
               value={filters.search ?? ''}
               onChange={e => setFilter('search', e.target.value || undefined)}
               className="w-full bg-dark-surface2/50 border border-dark-border rounded-xl pl-12 pr-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:ring-2 focus:ring-primary focus:border-primary"
@@ -192,7 +192,7 @@ export default function BrowsePage() {
               {listings.map(listing => (
                 <Link
                   key={listing.id}
-                  to={`/agents/${listing.slug}`}
+                  to={`/listings/${listing.slug}`}
                   className="bg-dark-surface2/50 border border-dark-border rounded-xl p-5 hover:border-primary/50 hover:bg-dark-surface2 transition-all group flex flex-col"
                 >
                   <div className="mb-4">
@@ -200,8 +200,13 @@ export default function BrowsePage() {
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors">
+                    <h3 className="text-white font-bold text-lg mb-1 group-hover:text-primary transition-colors flex items-center gap-2">
                       {listing.name}
+                      {listing.is_featured && (
+                        <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold shrink-0">
+                          <span className="material-symbols-outlined text-xs">star</span> Featured
+                        </span>
+                      )}
                     </h3>
                     <p className="text-slate-400 text-sm leading-relaxed line-clamp-2 mb-4">
                       {listing.short_description}
@@ -243,7 +248,7 @@ export default function BrowsePage() {
                         <span className="material-symbols-outlined text-sm">visibility</span>
                         {listing.view_count}
                       </span>
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1" title={listing.reputation_score == null ? 'Reputation scoring coming soon.' : undefined}>
                         <span className="material-symbols-outlined text-sm">star</span>
                         {listing.reputation_score ?? 'N/A'}
                       </span>

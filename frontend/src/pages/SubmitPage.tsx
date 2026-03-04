@@ -121,7 +121,14 @@ export default function SubmitPage() {
           <p className="text-slate-400 mb-2">
             Your listing <span className="text-primary font-bold">{name}</span> has been submitted for review.
           </p>
-          <p className="text-slate-500 text-sm mb-8">Our team will review it shortly. You'll see it in the directory once approved.</p>
+          <p className="text-slate-500 text-sm mb-4">Our team will review it shortly. You'll see it in the directory once approved.</p>
+          {mutation.data?.slug && (
+            <div className="bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-3 mb-8 text-left">
+              <p className="text-xs text-slate-400 mb-1">Your listing reference:</p>
+              <p className="text-sm font-mono text-primary font-bold">{mutation.data.slug}</p>
+              <p className="text-xs text-slate-500 mt-1">Keep this safe — you can use it to check on your listing status.</p>
+            </div>
+          )}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/browse" className="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors">
               Browse Directory

@@ -135,15 +135,20 @@ export default function HomePage() {
                     <tr
                       key={listing.id}
                       className="hover:bg-primary/5 transition-colors cursor-pointer group"
-                      onClick={() => navigate(`/agents/${listing.slug}`)}
+                      onClick={() => navigate(`/listings/${listing.slug}`)}
                     >
                       <td className="px-6 py-5 font-bold text-slate-400">{idx + 1}</td>
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-4">
                           <ListingLogo name={listing.name} logoUrl={listing.logo_url} />
                           <div>
-                            <div className="font-bold text-lg group-hover:text-primary transition-colors text-white">
+                            <div className="font-bold text-lg group-hover:text-primary transition-colors text-white flex items-center gap-2">
                               {listing.name}
+                              {listing.is_featured && (
+                                <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[10px] font-bold">
+                                  <span className="material-symbols-outlined text-xs">star</span> Featured
+                                </span>
+                              )}
                             </div>
                             <div className="text-xs text-slate-500 line-clamp-1 max-w-xs">
                               {listing.short_description}
@@ -169,12 +174,12 @@ export default function HomePage() {
                         {listing.reputation_score != null ? (
                           <span className="text-primary text-sm font-medium">{listing.reputation_score}</span>
                         ) : (
-                          <span className="text-slate-500 text-sm">N/A</span>
+                          <span className="text-slate-500 text-sm" title="Reputation scoring coming soon.">N/A</span>
                         )}
                       </td>
                       <td className="px-6 py-5 text-right">
                         <Link
-                          to={`/agents/${listing.slug}`}
+                          to={`/listings/${listing.slug}`}
                           className="text-primary hover:text-accent transition-colors"
                           onClick={e => e.stopPropagation()}
                         >

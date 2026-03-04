@@ -6,6 +6,7 @@ import BrowsePage from './pages/BrowsePage';
 import ListingDetailPage from './pages/ListingDetailPage';
 import SubmitPage from './pages/SubmitPage';
 import NotFoundPage from './pages/NotFoundPage';
+import ApiDocsPage from './pages/ApiDocsPage';
 // Admin imports
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -43,8 +44,9 @@ export default function App() {
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/browse" element={<BrowsePage />} />
-            <Route path="/agents/:slug" element={<ListingDetailPage />} />
+            <Route path="/listings/:slug" element={<ListingDetailPage />} />
             <Route path="/submit" element={<SubmitPage />} />
+            <Route path="/api-docs" element={<ApiDocsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

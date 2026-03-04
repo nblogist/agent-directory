@@ -26,6 +26,8 @@ export default function AdminDashboard() {
   const adminSearch = searchParams.get('search') || undefined;
   const [statusFilter, setStatusFilter] = useState<ListingStatus | undefined>(undefined);
   const [page, setPage] = useState(1);
+  const [rejectTarget, setRejectTarget] = useState<{ id: string; name: string } | null>(null);
+  const [rejectNote, setRejectNote] = useState('');
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['adminStats'],
@@ -49,10 +51,12 @@ export default function AdminDashboard() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: (id: string) => api.admin.listings.reject(token, id),
+    mutationFn: ({ id, note }: { id: string; note?: string }) => api.admin.listings.reject(token, id, note),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminListings'] });
       queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      setRejectTarget(null);
+      setRejectNote('');
     },
   });
 
@@ -168,7 +172,7 @@ export default function AdminDashboard() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-800/30 text-slate-400 uppercase text-[10px] font-bold tracking-widest">
-                <th className="px-6 py-4">Agent Name</th>
+                <th className="px-6 py-4">Listing Name</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-center">CKB Featured</th>
@@ -254,9 +258,8 @@ export default function AdminDashboard() {
                         </Link>
                         {row.status !== 'rejected' ? (
                           <button
-                            onClick={() => rejectMutation.mutate(row.id)}
-                            disabled={rejectMutation.isPending}
-                            className="text-xs font-bold text-red-500 hover:underline disabled:opacity-50"
+                            onClick={() => setRejectTarget({ id: row.id, name: row.name })}
+                            className="text-xs font-bold text-red-500 hover:underline"
                           >
                             Reject
                           </button>
@@ -354,6 +357,41 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Reject Modal */}
+      {rejectTarget && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 w-full max-w-md shadow-2xl">
+            <h3 className="text-lg font-bold mb-1">Reject Listing</h3>
+            <p className="text-sm text-slate-400 mb-4">
+              Rejecting <span className="text-white font-medium">{rejectTarget.name}</span>
+            </p>
+            <label className="block text-sm text-slate-400 mb-2">Rejection note (optional)</label>
+            <textarea
+              value={rejectNote}
+              onChange={e => setRejectNote(e.target.value)}
+              rows={3}
+              placeholder="Reason for rejection..."
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:ring-1 focus:ring-primary resize-none"
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                onClick={() => { setRejectTarget(null); setRejectNote(''); }}
+                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => rejectMutation.mutate({ id: rejectTarget.id, note: rejectNote.trim() || undefined })}
+                disabled={rejectMutation.isPending}
+                className="px-4 py-2 bg-red-600 text-white text-sm font-bold rounded-lg hover:bg-red-500 transition-colors disabled:opacity-50"
+              >
+                {rejectMutation.isPending ? 'Rejecting...' : 'Confirm Reject'}
+              </button>
+            </div>
           </div>
         </div>
       )}

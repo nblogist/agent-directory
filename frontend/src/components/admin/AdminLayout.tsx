@@ -62,7 +62,7 @@ export function AdminLayout() {
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
               <input
                 className="w-full pl-10 pr-10 py-2 bg-slate-800/50 border-none rounded-lg focus:ring-2 focus:ring-primary text-sm"
-                placeholder="Search submissions, agents, or authors..."
+                placeholder="Search submissions, listings, or authors..."
                 type="text"
                 value={searchInput}
                 onChange={e => {

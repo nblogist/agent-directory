@@ -33,7 +33,7 @@ export default function Footer() {
           <div>
             <h4 className="font-bold mb-4">Developer</h4>
             <ul className="space-y-2 text-sm text-slate-500">
-              <li><a href="#" className="hover:text-primary transition-colors">API Docs</a></li>
+              <li><Link to="/api-docs" className="hover:text-primary transition-colors">API Docs</Link></li>
               <li><Link to="/submit" className="hover:text-primary transition-colors">Submit a Listing</Link></li>
             </ul>
           </div>
@@ -46,9 +46,20 @@ export default function Footer() {
           </div>
         </div>
       </div>
-      <div className="max-w-[1440px] mx-auto mt-12 pt-8 border-t border-primary/10 flex justify-between items-center">
-        <p className="text-xs text-slate-500">&copy; 2024 {APP_NAME}. All rights reserved.</p>
-        <div className="flex gap-4">
+      <div className="max-w-[1440px] mx-auto mt-12 pt-8 border-t border-primary/10 flex flex-col gap-4 items-center text-center">
+        <p className="text-xs text-slate-500">
+          Made with love by{' '}
+          <a href="https://x.com/furqandotahmed" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-primary transition-colors">
+            Furqan (@furqandotahmed)
+          </a>{' '}
+          in Pakistan — Part of the{' '}
+          <a href="https://www.nervos.org/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-primary transition-colors">
+            Humans Not Required
+          </a>{' '}
+          initiative by Nervos/CKB
+        </p>
+        <div className="flex items-center justify-between w-full">
+          <p className="text-xs text-slate-500">&copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.</p>
           <span className="text-xs text-slate-400 flex items-center gap-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Network Status: Live
           </span>

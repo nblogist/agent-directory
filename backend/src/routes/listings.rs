@@ -102,6 +102,7 @@ async fn build_public_listing(pool: &DbPool, row: Listing) -> Result<PublicListi
         is_featured: row.is_featured,
         view_count: row.view_count,
         submitted_at: row.submitted_at,
+        updated_at: row.updated_at,
         approved_at: row.approved_at,
         categories,
         tags,
