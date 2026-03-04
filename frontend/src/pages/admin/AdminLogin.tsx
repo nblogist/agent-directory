@@ -20,7 +20,9 @@ export default function AdminLogin() {
       setStoreToken(token.trim());
       navigate('/admin/dashboard', { replace: true });
     } catch (err) {
-      if (err instanceof ApiError && err.status === 401) {
+      if (err instanceof ApiError && err.status === 429) {
+        setError('Too many login attempts. Please try again later.');
+      } else if (err instanceof ApiError && err.status === 401) {
         setError('Invalid token');
       } else {
         setError('Could not reach the server. Please try again.');
