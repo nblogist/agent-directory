@@ -19,6 +19,11 @@
     @apply bg-dark-bg text-white antialiased;
     font-family: 'Space Grotesk', sans-serif;
   }
+
+  /* All interactive elements get pointer cursor */
+  a, button, select, [role="button"], summary {
+    cursor: pointer;
+  }
 }
 
 /* Neon glow effect for hero text */

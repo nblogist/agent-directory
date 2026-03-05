@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
-import { APP_NAME } from '../lib/constants';
+import { APP_NAME, API_BASE_URL } from '../lib/constants';
 
-// For display purposes, always show the user-facing origin (not the backend URL).
-// In production, the frontend domain serves /api via reverse proxy or same-origin.
-const baseUrl = window.location.origin;
+// Show the actual API base URL (backend domain in production, origin in dev with proxy)
+const baseUrl = API_BASE_URL || window.location.origin;
 
 function Endpoint({ method, path, description, params, body, response, rateLimit }: {
   method: 'GET' | 'POST' | 'PATCH';
@@ -67,7 +66,7 @@ function Endpoint({ method, path, description, params, body, response, rateLimit
 
 export default function ApiDocsPage() {
   return (
-    <main className="flex-1 max-w-5xl mx-auto w-full px-6 lg:px-20 py-12">
+    <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-20 py-12">
       <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
         <Link className="text-slate-500 hover:text-primary transition-colors" to="/">Home</Link>
         <span className="text-slate-400 material-symbols-outlined text-xs">chevron_right</span>
@@ -131,7 +130,7 @@ export default function ApiDocsPage() {
       "github_url": "https://github.com/...",
       "docs_url": "https://...",
       "api_endpoint_url": "https://...",
-      "reputation_score": null,
+      "reputation_score": null,  // nullable -- populated by external scoring service
       "is_featured": false,
       "view_count": 42,
       "submitted_at": "2025-01-01T00:00:00Z",

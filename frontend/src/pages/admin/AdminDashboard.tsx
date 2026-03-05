@@ -324,7 +324,7 @@ export default function AdminDashboard() {
               <button
                 disabled={meta.page <= 1}
                 onClick={() => setPage(p => p - 1)}
-                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30"
+                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -342,7 +342,7 @@ export default function AdminDashboard() {
               <button
                 disabled={meta.page >= meta.total_pages}
                 onClick={() => setPage(p => p + 1)}
-                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30"
+                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next
               </button>

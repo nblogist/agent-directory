@@ -31,18 +31,18 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero Section ────────────────────────────────────── */}
-      <section className="relative px-6 py-16 lg:py-24 overflow-hidden">
+      <section className="relative px-4 sm:px-6 py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(55,19,236,0.1),transparent)] pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-widest uppercase mb-6 border border-primary/20">
-            AI-First Application Directory
+            Autonomous-Agent-First Directory
           </span>
 
-          <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-8 neon-glow">
+          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-8 neon-glow">
             Discover the Best <span className="text-primary italic">AI-First Tools & Infrastructure</span>
           </h1>
 
-          <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
             Discover and explore the most popular AI agents, tools, and infrastructure across the decentralized web. An open directory for the agentic economy.
           </p>
 
@@ -58,10 +58,28 @@ export default function HomePage() {
                 onChange={e => setSearchTerm(e.target.value)}
               />
             </div>
-            <button type="submit" className="bg-primary text-white px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95">
+            <button type="submit" className="bg-primary text-white px-6 sm:px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95">
               Explore
             </button>
           </form>
+
+          {/* Hero CTAs */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+            <Link
+              to="/submit"
+              className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary px-6 py-2.5 rounded-lg font-bold text-sm transition-all duration-300 ease-out hover:scale-[1.05] hover:bg-primary hover:text-white hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95"
+            >
+              <span className="material-symbols-outlined text-lg">add_circle</span>
+              Submit a Listing
+            </Link>
+            <Link
+              to="/api-docs"
+              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 text-accent px-6 py-2.5 rounded-lg font-bold text-sm transition-all duration-300 ease-out hover:scale-[1.05] hover:bg-accent hover:text-dark-bg hover:shadow-[0_0_20px_rgba(0,242,255,0.3)] active:scale-95"
+            >
+              <span className="material-symbols-outlined text-lg">api</span>
+              Agent API
+            </Link>
+          </div>
 
           {/* Trending pills — real categories */}
           <div className="flex flex-wrap justify-center gap-3 mt-10">
@@ -80,7 +98,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Top Listings Table ─────────────────────────────── */}
-      <section className="max-w-[1440px] mx-auto px-6 py-12">
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 py-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <h2 className="text-3xl font-bold mb-2">Top Listings</h2>
@@ -89,23 +107,23 @@ export default function HomePage() {
         </div>
 
         <div className="w-full overflow-x-auto rounded-xl border border-primary/20 bg-dark-surface shadow-xl">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse min-w-[640px]">
             <thead>
               <tr className="bg-primary/5 border-b border-primary/20">
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tool</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Views</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Reputation</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">#</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tool</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Category</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Views</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Reputation</th>
+                <th className="px-4 sm:px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-primary/10">
               {listingsLoading ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-5">
+                    <td className="px-4 sm:px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded" /></td>
+                    <td className="px-4 sm:px-6 py-5">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-lg bg-slate-800" />
                         <div className="space-y-2">
@@ -114,10 +132,10 @@ export default function HomePage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-5"><div className="h-4 w-20 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-5"><div className="h-4 w-12 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-5"><div className="h-4 w-10 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded ml-auto" /></td>
+                    <td className="px-4 sm:px-6 py-5"><div className="h-4 w-20 bg-slate-800 rounded" /></td>
+                    <td className="px-4 sm:px-6 py-5"><div className="h-4 w-12 bg-slate-800 rounded" /></td>
+                    <td className="px-4 sm:px-6 py-5"><div className="h-4 w-10 bg-slate-800 rounded" /></td>
+                    <td className="px-4 sm:px-6 py-5"><div className="h-4 w-6 bg-slate-800 rounded ml-auto" /></td>
                   </tr>
                 ))
               ) : topListings.length === 0 ? (
@@ -137,8 +155,8 @@ export default function HomePage() {
                       className="hover:bg-primary/5 transition-colors cursor-pointer group"
                       onClick={() => navigate(`/listings/${listing.slug}`)}
                     >
-                      <td className="px-6 py-5 font-bold text-slate-400">{idx + 1}</td>
-                      <td className="px-6 py-5">
+                      <td className="px-4 sm:px-6 py-5 font-bold text-slate-400">{idx + 1}</td>
+                      <td className="px-4 sm:px-6 py-5">
                         <div className="flex items-center gap-4">
                           <ListingLogo name={listing.name} logoUrl={listing.logo_url} size="size-14" textSize="text-lg" />
                           <div>
@@ -156,28 +174,28 @@ export default function HomePage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-5">
+                      <td className="px-4 sm:px-6 py-5">
                         {primaryCat ? (
                           <span className={`${catColor.bg} ${catColor.text} text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded`}>
                             {primaryCat.name}
                           </span>
                         ) : (
-                          <span className="text-slate-500 text-sm">—</span>
+                          <span className="text-slate-500 text-sm">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-5 font-medium">
+                      <td className="px-4 sm:px-6 py-5 font-medium">
                         {listing.view_count >= 1000
                           ? `${(listing.view_count / 1000).toFixed(1)}k`
                           : listing.view_count}
                       </td>
-                      <td className="px-6 py-5">
+                      <td className="px-4 sm:px-6 py-5">
                         {listing.reputation_score != null ? (
                           <span className="text-primary text-sm font-medium">{listing.reputation_score}</span>
                         ) : (
                           <span className="text-slate-500 text-sm" title="Reputation scoring coming soon.">N/A</span>
                         )}
                       </td>
-                      <td className="px-6 py-5 text-right">
+                      <td className="px-4 sm:px-6 py-5 text-right">
                         <Link
                           to={`/listings/${listing.slug}`}
                           className="text-primary hover:text-accent transition-colors"
@@ -200,6 +218,28 @@ export default function HomePage() {
             className="inline-block bg-primary/10 border border-primary/20 text-primary px-8 py-3 rounded-lg font-bold transition-all duration-300 ease-out hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95"
           >
             View All Listings
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Agent-First Banner ─────────────────────────────── */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 pb-16">
+        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 sm:p-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+          <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+            <span className="material-symbols-outlined text-primary text-4xl">smart_toy</span>
+          </div>
+          <div className="flex-1 text-center md:text-left">
+            <h3 className="text-xl font-bold mb-2">Built for Autonomous Agents</h3>
+            <p className="text-slate-400 text-sm max-w-xl">
+              Every action available via REST API. Agents can discover, filter, submit, and retrieve listings programmatically -- no browser required.
+            </p>
+          </div>
+          <Link
+            to="/api-docs"
+            className="flex-shrink-0 inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-bold text-sm transition-all hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95"
+          >
+            <span className="material-symbols-outlined text-lg">api</span>
+            View API Docs
           </Link>
         </div>
       </section>

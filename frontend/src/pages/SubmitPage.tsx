@@ -169,13 +169,17 @@ export default function SubmitPage() {
   }
 
   return (
-    <main className="flex-1 max-w-[1440px] mx-auto w-full px-6 lg:px-20 py-12">
+    <main className="flex-1 max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-20 py-12">
       <div className="flex flex-col lg:flex-row gap-12">
         {/* Form Column */}
         <div className="flex-1">
           <div className="mb-12">
-            <h1 className="text-4xl font-bold mb-4">Listing Submission Form</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4">Listing Submission Form</h1>
             <p className="text-slate-400 max-w-2xl">Provide essential details to list your tool in the directory. Fields marked with * are required.</p>
+            <div className="mt-4 px-4 py-3 bg-accent/5 border border-accent/20 rounded-lg inline-flex items-center gap-2 text-sm text-accent">
+              <span className="material-symbols-outlined text-lg">api</span>
+              <span>Submitting via API? Use <code className="font-mono bg-accent/10 px-1.5 py-0.5 rounded text-xs">POST /api/listings</code> -- no UI required. <Link to="/api-docs" className="underline font-bold hover:text-white transition-colors">View docs</Link></span>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-0">
@@ -186,7 +190,7 @@ export default function SubmitPage() {
               </div>
               <h2 className="text-xl font-bold">1. Contact Information</h2>
             </div>
-            <div className="bg-dark-surface p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
               <div>
                 <label className="block text-sm font-bold mb-2 text-slate-300">
                   Contact Email<span className="text-primary ml-1">*</span>
@@ -210,7 +214,7 @@ export default function SubmitPage() {
               </div>
               <h2 className="text-xl font-bold">2. Listing Details</h2>
             </div>
-            <div className="bg-dark-surface p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-2 md:col-span-1">
                   <label className="block text-sm font-bold mb-2 text-slate-300">Listing Name<span className="text-primary ml-1">*</span></label>
@@ -355,7 +359,7 @@ export default function SubmitPage() {
                 {/* Category selection */}
                 <div className="col-span-2">
                   <label className="block text-sm font-bold mb-2 text-slate-300">Category<span className="text-primary ml-1">*</span></label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     {(categories ?? []).map(cat => (
                       <button
                         key={cat.id}
@@ -407,9 +411,9 @@ export default function SubmitPage() {
               </div>
               <h2 className="text-xl font-bold">3. Chain Integration <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span></h2>
             </div>
-            <div className="bg-dark-surface p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
               <label className="block text-sm font-bold mb-2 text-slate-300">Select supported chains</label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {(chains ?? []).map(chain => {
                   const isSelected = selectedChains.includes(chain.id);
                   return (

@@ -16,7 +16,7 @@ export default function ListingDetailPage() {
 
   if (isLoading) {
     return (
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-8 animate-pulse">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-20 py-8 animate-pulse">
         <div className="h-4 w-48 bg-slate-800 rounded mb-8" />
         <div className="flex flex-col md:flex-row gap-6 items-start mb-10">
           <div className="size-32 rounded-xl bg-slate-800" />
@@ -45,7 +45,7 @@ export default function ListingDetailPage() {
   if (error) {
     const is404 = error instanceof ApiError && error.status === 404;
     return (
-      <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-20 text-center">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-20 py-20 text-center">
         <span className="material-symbols-outlined text-6xl text-slate-600 mb-4">{is404 ? 'error_outline' : 'cloud_off'}</span>
         <h1 className="text-3xl font-bold mb-2">{is404 ? 'Listing Not Found' : 'Failed to Load'}</h1>
         <p className="text-slate-400 mb-8">
@@ -71,7 +71,7 @@ export default function ListingDetailPage() {
   }
 
   return (
-    <main className="flex-1 max-w-7xl mx-auto w-full px-6 lg:px-20 py-8">
+    <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-20 py-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
         <Link className="text-slate-500 hover:text-primary transition-colors" to="/">Home</Link>
@@ -133,6 +133,16 @@ export default function ListingDetailPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-3 w-full lg:w-auto">
+          {listing.api_endpoint_url && (
+            <a
+              href={listing.api_endpoint_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 lg:flex-none flex items-center justify-center gap-2 rounded-lg h-11 px-6 bg-accent text-dark-bg text-sm font-bold hover:opacity-90 transition-opacity shadow-[0_0_15px_rgba(0,242,255,0.2)]"
+            >
+              <span className="material-symbols-outlined text-lg">api</span> API Endpoint
+            </a>
+          )}
           <a
             href={listing.website_url}
             target="_blank"
@@ -243,8 +253,8 @@ export default function ListingDetailPage() {
               )}
               {listing.api_endpoint_url && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-slate-500">API</span>
-                  <a href={listing.api_endpoint_url} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline truncate ml-4">
+                  <span className="text-sm text-slate-500">API Endpoint</span>
+                  <a href={listing.api_endpoint_url} target="_blank" rel="noopener noreferrer" className="text-sm text-accent hover:underline truncate ml-4 font-medium">
                     Endpoint
                   </a>
                 </div>

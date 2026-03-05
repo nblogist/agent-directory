@@ -123,7 +123,7 @@ export default function BrowsePage() {
 
       {/* Main Content */}
       <section className="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar bg-dark-bg/30">
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           <div className="mb-8">
             <h1 className="text-3xl font-black text-white leading-tight tracking-tight mb-2">Directory</h1>
             <p className="text-slate-400 text-lg">Explore the most powerful AI-first tools and services.</p>
@@ -149,12 +149,12 @@ export default function BrowsePage() {
             )}
           </div>
 
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
             <span className="text-sm text-slate-400">
               {isLoading ? 'Loading...' : `Showing ${meta.total} listing${meta.total !== 1 ? 's' : ''}`}
             </span>
             <div className="flex items-center gap-4">
-              <span className="text-sm text-slate-400">Sort by:</span>
+              <span className="text-sm text-slate-400 hidden sm:inline">Sort by:</span>
               <select
                 value={filters.sort || 'newest'}
                 onChange={e => setFilter('sort', e.target.value)}
@@ -281,7 +281,7 @@ export default function BrowsePage() {
                 <button
                   disabled={meta.page <= 1}
                   onClick={() => setFilter('page', String(meta.page - 1))}
-                  className="size-10 flex items-center justify-center rounded-lg border border-dark-border text-slate-400 hover:bg-dark-surface2 hover:text-white transition-colors disabled:opacity-30"
+                  className="size-10 flex items-center justify-center rounded-lg border border-dark-border text-slate-400 hover:bg-dark-surface2 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined">chevron_left</span>
                 </button>
@@ -313,7 +313,7 @@ export default function BrowsePage() {
                 <button
                   disabled={meta.page >= meta.total_pages}
                   onClick={() => setFilter('page', String(meta.page + 1))}
-                  className="size-10 flex items-center justify-center rounded-lg border border-dark-border text-slate-400 hover:bg-dark-surface2 hover:text-white transition-colors disabled:opacity-30"
+                  className="size-10 flex items-center justify-center rounded-lg border border-dark-border text-slate-400 hover:bg-dark-surface2 hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   <span className="material-symbols-outlined">chevron_right</span>
                 </button>

@@ -3,7 +3,7 @@ import { APP_NAME } from '../../lib/constants';
 
 export default function Footer() {
   return (
-    <footer className="bg-dark-bg border-t border-primary/20 py-12 px-6 lg:px-20">
+    <footer className="bg-dark-bg border-t border-primary/20 py-12 px-4 sm:px-6 lg:px-20">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div className="max-w-xs">
           <div className="flex items-center gap-2 mb-6">
