@@ -29,4 +29,5 @@ WORKDIR /app
 
 EXPOSE 8000
 
-CMD ["agent-directory"]
+# Railway sets PORT env var; map it to ROCKET_PORT so Rocket listens on the right port
+CMD sh -c "export ROCKET_PORT=${PORT:-8000} && agent-directory"
