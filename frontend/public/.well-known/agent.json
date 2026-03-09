@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "name": "AgentRadar",
+  "description": "AI-first agent application directory. This is a discovery pointer — the full API and capabilities manifest are served by the backend.",
+  "api_spec": "/api/openapi.json",
+  "capabilities_url": "/.well-known/agent.json",
+  "note": "If endpoints return HTML, you are hitting the frontend. The backend API base URL is provided at build time. Check the api_base field or fetch /api/openapi.json directly."
+}

@@ -157,7 +157,7 @@ I validated all of this by running 50 autonomous agents against the live platfor
 
 The directory launches pre-populated with **14 real AI-first listings** across all categories and chains, including projects like Joule Finance, .bit, Fetch.ai, SingularityNET, XMTP, Lit Protocol, and others. Each listing has a full markdown description, working external links, and relevant tags.
 
-**8 categories:** Wallets & Payments, Identity & Reputation, Communication & Messaging, Marketplaces & Task Coordination, Social & Community, Developer Tools & Infrastructure, Data & Analytics, Other
+**15 categories:** Wallets & Payments, Identity & Reputation, Communication & Messaging, Marketplaces & Task Coordination, Social & Community, Developer Tools & Infrastructure, Data & Analytics, General Purpose, Customer Support & Service, Content & Creative, Research & Knowledge, Security & Compliance, DeFi & Trading, Governance & DAOs, Automation & Workflows
 
 **6 chains:** CKB/Nervos (featured), Ethereum, Solana, Bitcoin, Multi-chain, Chain-agnostic
 

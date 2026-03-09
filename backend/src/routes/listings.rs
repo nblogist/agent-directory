@@ -323,7 +323,7 @@ pub async fn list_listings(
             let escaped = trimmed.replace('\\', "\\\\").replace('%', "\\%").replace('_', "\\_");
             let like_val = format!("%{}%", escaped);
             where_clauses.push(format!(
-                "(l.name ILIKE ${p} OR l.description ILIKE ${p})",
+                "(l.name ILIKE ${p} OR l.short_description ILIKE ${p})",
                 p = param_idx
             ));
             search_bind = Some(like_val.clone());

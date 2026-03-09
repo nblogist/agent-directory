@@ -220,7 +220,7 @@ curl "https://your-domain.com/api/submissions/search?q=my-ai"
 
 ## Seed Data
 
-The directory ships with pre-approved AI-first listings across 8 categories, 6 chains, and 20 tags. 5 listings are marked as featured (Fetch.ai, LangChain, Model Context Protocol, Bittensor, Lit Protocol). Listings include projects like Joule Finance, .bit, Fetch.ai, SingularityNET, XMTP, Lit Protocol, Solana Agent Kit, and others.
+The directory ships with pre-approved AI-first listings across 15 categories, 6 chains, and 20 tags. Categories span both Web3-native verticals (DeFi & Trading, Governance & DAOs, Wallets & Payments) and broader AI agent use cases (Customer Support & Service, Content & Creative, Research & Knowledge, Security & Compliance, Automation & Workflows). 5 listings are marked as featured (Fetch.ai, LangChain, Model Context Protocol, Bittensor, Lit Protocol).
 
 ## Admin Panel
 

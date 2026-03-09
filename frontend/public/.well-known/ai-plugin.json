@@ -1,0 +1,11 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "AgentRadar",
+  "name_for_model": "agentradar",
+  "description_for_model": "AgentRadar is an AI agent directory. Use /api/openapi.json for the full API spec. Search, submit, and check status of AI agent listings.",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "/api/openapi.json"
+  }
+}
