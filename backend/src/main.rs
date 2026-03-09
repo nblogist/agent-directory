@@ -152,6 +152,29 @@ fn openapi_spec() -> (Status, (rocket::http::ContentType, &'static str)) {
     (Status::Ok, (rocket::http::ContentType::JSON, include_str!("../openapi.json")))
 }
 
+/// GET / — Root discovery endpoint for AI agents
+#[get("/")]
+fn root_discovery() -> (Status, (rocket::http::ContentType, &'static str)) {
+    (Status::Ok, (rocket::http::ContentType::JSON, r#"{
+  "name": "AgentRadar API",
+  "description": "AI-first agent application directory. Discover, search, and submit AI agent tools and services.",
+  "api": "/api",
+  "openapi": "/api/openapi.json",
+  "agent_manifest": "/.well-known/agent.json",
+  "ai_plugin": "/.well-known/ai-plugin.json",
+  "health": "/api/health",
+  "endpoints": {
+    "listings": "/api/listings",
+    "categories": "/api/categories",
+    "chains": "/api/chains",
+    "tags": "/api/tags",
+    "submit": "/api/listings",
+    "submission_search": "/api/submissions/search?q={query}",
+    "submission_status": "/api/submissions/{id}/status"
+  }
+}"#))
+}
+
 /// GET /.well-known/ai-plugin.json — AI plugin manifest for agent frameworks
 #[get("/.well-known/ai-plugin.json")]
 fn ai_plugin_manifest() -> (Status, (rocket::http::ContentType, &'static str)) {
@@ -205,6 +228,7 @@ async fn rocket() -> _ {
             internal_error_catcher,
         ])
         .mount("/", routes![
+            root_discovery,
             ai_plugin_manifest,
             agent_manifest,
         ])

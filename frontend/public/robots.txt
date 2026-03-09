@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# API Discovery
+# OpenAPI Spec: /api/openapi.json
+# Agent Manifest: /.well-known/agent.json
+# AI Plugin Manifest: /.well-known/ai-plugin.json
+# Health Check: /api/health
