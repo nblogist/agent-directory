@@ -363,7 +363,7 @@ pub async fn list_listings(
     let list_sql = format!(
         "SELECT DISTINCT l.id, l.name, l.slug, l.short_description, l.description, \
          l.logo_url, l.website_url, l.github_url, l.docs_url, l.api_endpoint_url, \
-         l.contact_email, l.status, l.rejection_note, l.reputation_score, l.is_featured, l.view_count, \
+         l.contact_email, l.submitter_token, l.status, l.rejection_note, l.reputation_score, l.is_featured, l.view_count, \
          l.submitted_at, l.updated_at, l.approved_at \
          FROM listings l {} {} \
          ORDER BY {} \
@@ -458,7 +458,7 @@ pub async fn get_listing(
              WHERE id = $1 AND status = 'approved' \
              RETURNING id, name, slug, short_description, description, \
                        logo_url, website_url, github_url, docs_url, api_endpoint_url, \
-                       contact_email, status, rejection_note, reputation_score, is_featured, view_count, \
+                       contact_email, submitter_token, status, rejection_note, reputation_score, is_featured, view_count, \
                        submitted_at, updated_at, approved_at"
         )
         .bind(id)
@@ -471,7 +471,7 @@ pub async fn get_listing(
              WHERE slug = $1 AND status = 'approved' \
              RETURNING id, name, slug, short_description, description, \
                        logo_url, website_url, github_url, docs_url, api_endpoint_url, \
-                       contact_email, status, rejection_note, reputation_score, is_featured, view_count, \
+                       contact_email, submitter_token, status, rejection_note, reputation_score, is_featured, view_count, \
                        submitted_at, updated_at, approved_at"
         )
         .bind(slug_or_id)
@@ -628,6 +628,8 @@ pub struct SubmitResponse {
     pub status: String,
     pub message: String,
     pub submitted_at: chrono::DateTime<chrono::Utc>,
+    /// Returned only once — agent's key for status checks and future edits.
+    pub submitter_token: uuid::Uuid,
 }
 
 #[derive(serde::Deserialize, Debug)]
@@ -748,18 +750,18 @@ pub async fn submit_listing(
             }
         }
     }
-    let email = payload.contact_email.as_deref().unwrap_or("").trim().to_string();
-    if email.is_empty() {
-        errors.push(FieldError {
-            field: "contact_email".to_string(),
-            message: "is required".to_string(),
-        });
-    } else if !email.contains('@') || !email.contains('.') {
+    let email_raw = payload.contact_email.as_deref().unwrap_or("").trim().to_string();
+    let email: Option<String> = if email_raw.is_empty() {
+        None
+    } else if !email_raw.contains('@') || !email_raw.contains('.') {
         errors.push(FieldError {
             field: "contact_email".to_string(),
             message: "must be a valid email address".to_string(),
         });
-    }
+        None
+    } else {
+        Some(email_raw)
+    };
     if payload.categories.is_empty() {
         errors.push(FieldError {
             field: "categories".to_string(),
@@ -811,12 +813,12 @@ pub async fn submit_listing(
         .map_err(|e| AppError::Db(e).into_response())?;
 
     // --- Insert listing ---
-    let listing_id: uuid::Uuid = sqlx::query_scalar(
+    let row: (uuid::Uuid, uuid::Uuid) = sqlx::query_as(
         "INSERT INTO listings \
          (id, name, slug, short_description, description, logo_url, website_url, \
           github_url, docs_url, api_endpoint_url, contact_email, status) \
          VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending') \
-         RETURNING id"
+         RETURNING id, submitter_token"
     )
     .bind(&name)
     .bind(&slug)
@@ -831,6 +833,8 @@ pub async fn submit_listing(
     .fetch_one(&mut *tx)
     .await
     .map_err(|e| AppError::Db(e).into_response())?;
+    let listing_id = row.0;
+    let submitter_token = row.1;
 
     // --- Associate categories (verify existence first) ---
     for cat_id in &payload.categories {
@@ -933,6 +937,7 @@ pub async fn submit_listing(
         status: "pending".to_string(),
         message: "Your listing has been submitted and is pending admin review. Use GET /api/submissions/<id>/status to check its status.".to_string(),
         submitted_at,
+        submitter_token,
     };
 
     Ok(rocket::response::status::Created::new(

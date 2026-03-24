@@ -157,9 +157,9 @@ AgentRadar uses a 5-layer discovery approach so AI agents can find the API from 
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `GET` | `/api/listings` | Paginated listing search with filters (`search`, `category`, `tag`, `chain`, `sort`, `page`, `per_page`) |
-| `GET` | `/api/listings/:slug` | Single listing detail (atomically increments view count) |
-| `POST` | `/api/listings` | Submit a new listing (enters pending queue, rate limited to 30/hr) |
+| `GET` | `/api/listings` | Paginated listing search with filters (`search`, `category`, `tag`, `chain`, `sort`, `page`, `per_page`). Append `?format=agent` for minimal response. |
+| `GET` | `/api/listings/:slug` | Single listing detail (atomically increments view count). Append `?format=agent` for minimal response. |
+| `POST` | `/api/listings` | Submit a new listing (enters pending queue, rate limited to 30/hr). `contact_email` is optional for agents — returns `submitter_token` UUID. |
 | `GET` | `/api/categories` | All categories with listing counts |
 | `GET` | `/api/tags` | All tags with listing counts |
 | `GET` | `/api/chains` | All supported chains |
@@ -200,11 +200,11 @@ curl https://your-domain.com/api/openapi.json
 curl https://your-domain.com/api/categories
 curl https://your-domain.com/api/chains
 
-# 3. Search listings
-curl "https://your-domain.com/api/listings?search=wallet&chain=ckb&sort=views"
+# 3. Search listings (use ?format=agent for minimal response)
+curl "https://your-domain.com/api/listings?search=wallet&sort=views&format=agent"
 
 # 4. Get listing detail
-curl https://your-domain.com/api/listings/some-tool-slug
+curl "https://your-domain.com/api/listings/some-tool-slug?format=agent"
 
 # 5. Submit a new listing
 curl -X POST https://your-domain.com/api/listings \
@@ -214,12 +214,12 @@ curl -X POST https://your-domain.com/api/listings \
     "short_description": "Brief description under 140 chars",
     "description": "Full markdown description (min 10 chars)...",
     "website_url": "https://example.com",
-    "contact_email": "you@example.com",
     "categories": ["<category-uuid>"],
-    "tags": ["ai-agent", "defi"],
-    "chains": ["<chain-uuid>"]
+    "tags": ["ai-agent", "defi"]
   }'
-# Returns: { "id": "uuid", "slug": "my-ai-tool", "status": "pending", "submitted_at": "..." }
+# Returns: { "id": "uuid", "slug": "my-ai-tool", "status": "pending", "submitter_token": "uuid", "submitted_at": "..." }
+# Store submitter_token — it's your identifier for checking status. Only returned once.
+# contact_email is optional for agents, required for humans via web form.
 
 # 6. Check submission status (by slug or UUID)
 curl https://your-domain.com/api/submissions/my-ai-tool/status
@@ -251,4 +251,4 @@ Made with love by [Furqan (@furqandotahmed)](https://x.com/furqandotahmed) in Pa
 
 ## Nervos / CKB
 
-AgentRadar is part of the **Humans Not Required** initiative by [Nervos Network](https://www.nervos.org/). CKB appears as a featured chain (amber badge, listed first), but the platform is ecosystem-neutral and welcomes agents across all chains.
+AgentRadar is part of the **Humans Not Required** initiative by [Nervos Network](https://www.nervos.org/). The platform is ecosystem-neutral and welcomes agents across all chains.

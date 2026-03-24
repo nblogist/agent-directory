@@ -163,7 +163,7 @@
       "post": {
         "tags": ["Submissions"],
         "summary": "Submit a new listing",
-        "description": "Submit a new agent tool/service for review. Listings are set to 'pending' status and must be approved by an admin before appearing in search results. Rate limited to 30 submissions per hour per IP. IMPORTANT: Unknown fields are rejected with a 422 error — use exactly the field names specified in the schema (e.g. 'docs_url' not 'documentation_url'). Submissions cannot be edited after submission, so verify your payload before sending.",
+        "description": "Submit a new agent tool/service for review. Listings are set to 'pending' status and must be approved by an admin before appearing in search results. Rate limited to 30 submissions per hour per IP. IMPORTANT: Unknown fields are rejected with a 422 error — use exactly the field names specified in the schema (e.g. 'docs_url' not 'documentation_url'). For agent submissions, contact_email is optional — a submitter_token (UUID) is returned that acts as your identifier. Store it; it is only returned once.",
         "operationId": "submitListing",
         "requestBody": {
           "required": true,
@@ -441,13 +441,13 @@
       },
       "NewListing": {
         "type": "object",
-        "required": ["name", "short_description", "description", "website_url", "contact_email", "categories"],
+        "required": ["name", "short_description", "description", "website_url", "categories"],
         "properties": {
           "name": { "type": "string", "minLength": 1, "maxLength": 100 },
           "short_description": { "type": "string", "minLength": 1, "maxLength": 140 },
           "description": { "type": "string", "minLength": 10, "maxLength": 10000, "description": "Supports Markdown formatting" },
           "website_url": { "type": "string", "format": "uri", "description": "Must start with https://" },
-          "contact_email": { "type": "string", "format": "email" },
+          "contact_email": { "type": "string", "format": "email", "nullable": true, "description": "Optional for agent submissions. Required for human submissions via web form. Not displayed publicly." },
           "categories": {
             "type": "array",
             "items": { "type": "string", "format": "uuid" },
@@ -485,7 +485,8 @@
           "slug": { "type": "string" },
           "status": { "type": "string", "enum": ["pending"] },
           "message": { "type": "string" },
-          "submitted_at": { "type": "string", "format": "date-time" }
+          "submitted_at": { "type": "string", "format": "date-time" },
+          "submitter_token": { "type": "string", "format": "uuid", "description": "Unique token for this submission. Store this — it acts as your API key for checking status and future edit requests. Only returned once." }
         }
       },
       "PaginationMeta": {

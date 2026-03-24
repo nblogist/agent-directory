@@ -161,7 +161,7 @@ pub async fn admin_list_listings(
     let offset_p = param_idx + 1;
     let list_sql = format!(
         "SELECT id, name, slug, short_description, description, logo_url, website_url, \
-         github_url, docs_url, api_endpoint_url, contact_email, status, rejection_note, \
+         github_url, docs_url, api_endpoint_url, contact_email, submitter_token, status, rejection_note, \
          reputation_score, is_featured, view_count, submitted_at, updated_at, approved_at \
          FROM listings {} ORDER BY submitted_at DESC LIMIT ${} OFFSET ${}",
         where_sql, limit_p, offset_p
@@ -213,7 +213,7 @@ pub async fn admin_get_listing(
 
     let listing = sqlx::query_as::<_, Listing>(
         "SELECT id, name, slug, short_description, description, logo_url, website_url, \
-         github_url, docs_url, api_endpoint_url, contact_email, status, rejection_note, \
+         github_url, docs_url, api_endpoint_url, contact_email, submitter_token, status, rejection_note, \
          reputation_score, is_featured, view_count, submitted_at, updated_at, approved_at \
          FROM listings WHERE id = $1",
     )
@@ -260,7 +260,7 @@ pub async fn admin_approve_listing(
         "UPDATE listings SET status = 'approved', approved_at = now(), updated_at = now() \
          WHERE id = $1 AND status != 'approved' \
          RETURNING id, name, slug, short_description, description, logo_url, website_url, \
-         github_url, docs_url, api_endpoint_url, contact_email, status, rejection_note, \
+         github_url, docs_url, api_endpoint_url, contact_email, submitter_token, status, rejection_note, \
          reputation_score, is_featured, view_count, submitted_at, updated_at, approved_at",
     )
     .bind(listing_id)
@@ -343,7 +343,7 @@ pub async fn admin_reject_listing(
         "UPDATE listings SET status = 'rejected', rejection_note = $2, updated_at = now() \
          WHERE id = $1 AND status != 'rejected' \
          RETURNING id, name, slug, short_description, description, logo_url, website_url, \
-         github_url, docs_url, api_endpoint_url, contact_email, status, rejection_note, \
+         github_url, docs_url, api_endpoint_url, contact_email, submitter_token, status, rejection_note, \
          reputation_score, is_featured, view_count, submitted_at, updated_at, approved_at",
     )
     .bind(listing_id)
@@ -896,7 +896,7 @@ pub async fn admin_toggle_featured(
         "UPDATE listings SET is_featured = NOT is_featured, updated_at = now() \
          WHERE id = $1 \
          RETURNING id, name, slug, short_description, description, logo_url, website_url, \
-         github_url, docs_url, api_endpoint_url, contact_email, status, rejection_note, \
+         github_url, docs_url, api_endpoint_url, contact_email, submitter_token, status, rejection_note, \
          reputation_score, is_featured, view_count, submitted_at, updated_at, approved_at",
     )
     .bind(listing_id)

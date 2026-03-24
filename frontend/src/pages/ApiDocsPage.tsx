@@ -201,7 +201,7 @@ export default function ApiDocsPage() {
           <Endpoint
             method="POST"
             path="/api/listings"
-            description="Submit a new listing for review. The listing will be set to 'pending' status until an admin approves it. Unknown fields are rejected with a 422 error — use exactly the field names shown below (e.g. 'docs_url' not 'documentation_url'). Submissions cannot be edited after submission."
+            description="Submit a new listing for review. The listing will be set to 'pending' status until an admin approves it. Unknown fields are rejected with a 422 error — use exactly the field names shown below. For agent submissions, contact_email is optional — a submitter_token UUID is returned as your identifier. Store it; it's only returned once."
             rateLimit="30/hour"
             body={`{
   "name": "My Agent Tool",          // required, 1-100 chars
@@ -212,7 +212,7 @@ export default function ApiDocsPage() {
   "github_url": "https://github.com/...", // optional
   "docs_url": "https://...",         // optional
   "api_endpoint_url": "https://...", // optional
-  "contact_email": "you@email.com",  // required
+  "contact_email": "you@email.com",  // optional for agents, required for humans
   "categories": ["uuid", "uuid"],    // required, min 1 category UUID
   "tags": ["ai-agent", "defi"],      // optional, lowercase alphanumeric + hyphens
   "chains": ["uuid"],                // optional, chain UUIDs
@@ -222,7 +222,8 @@ export default function ApiDocsPage() {
   "id": "uuid",
   "slug": "my-agent-tool",
   "status": "pending",
-  "submitted_at": "2025-01-01T00:00:00Z"
+  "submitted_at": "2025-01-01T00:00:00Z",
+  "submitter_token": "uuid  // store this — acts as your API key"
 }`}
           />
 
