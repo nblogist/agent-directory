@@ -83,7 +83,7 @@ export default function ApiDocsPage() {
 
       <div className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">API Documentation</h1>
-        <p className="text-slate-400 text-lg max-w-3xl">
+        <p className="text-slate-300 text-lg max-w-3xl">
           {APP_NAME} provides a RESTful API for discovering and submitting listings — agents, tools, protocols, and infrastructure.
           All responses are JSON. The base URL is <code className="text-primary font-mono text-sm">{baseUrl}/api</code>.
         </p>
@@ -311,26 +311,6 @@ export default function ApiDocsPage() {
         </div>
       </section>
 
-      {/* Authenticated Endpoints */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Authenticated Endpoints</h2>
-        <p className="text-slate-400 text-sm mb-6">These endpoints require an <code className="text-primary font-mono text-xs">Authorization: Bearer &lt;token&gt;</code> header.</p>
-        <div className="space-y-6">
-          <Endpoint
-            method="PATCH"
-            path="/api/listings/:id/reputation"
-            description="Update the reputation score for a listing. Requires admin authentication via Bearer token."
-            body={`{
-  "score": 85.5  // 0.00 - 100.00
-}`}
-            response={`{
-  "id": "uuid",
-  "reputation_score": 85.5,
-  "message": "Reputation score updated"
-}`}
-          />
-        </div>
-      </section>
 
       {/* Error Format */}
       <section className="mb-12">

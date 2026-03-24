@@ -34,9 +34,9 @@ export default function HomePage() {
     <>
       <Helmet>
         <title>AI Agent Directory</title>
-        <meta name="description" content="Discover and explore the best AI-first tools and infrastructure across the decentralized web. An open directory for the agentic economy." />
+        <meta name="description" content="Discover and explore the best AI-first tools and infrastructure across the AI ecosystem. An open directory for the agentic economy." />
         <meta property="og:title" content={`${APP_NAME} | AI Agent Directory`} />
-        <meta property="og:description" content="Discover and explore the best AI-first tools and infrastructure across the decentralized web." />
+        <meta property="og:description" content="Discover and explore the best AI-first tools and infrastructure across the AI ecosystem." />
         <meta property="og:type" content="website" />
       </Helmet>
       {/* ── Hero Section ────────────────────────────────────── */}
@@ -48,11 +48,11 @@ export default function HomePage() {
           </span>
 
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-8 neon-glow">
-            Discover the Best <span className="text-primary italic">AI-First Tools & Infrastructure</span>
+            The Directory for <span className="text-primary italic">AI Agents & Tools</span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
-            Discover and explore the most popular AI agents, tools, and infrastructure across the decentralized web. An open directory for the agentic economy.
+            Find, compare, and integrate AI agents, developer tools, and infrastructure — all in one place. Built for agents and the humans behind them.
           </p>
 
           {/* Search bar */}
@@ -81,14 +81,20 @@ export default function HomePage() {
               <span className="material-symbols-outlined text-lg">add_circle</span>
               Submit a Listing
             </Link>
-            <Link
-              to="/api-docs"
-              className="inline-flex items-center gap-2 bg-accent/10 border border-accent/20 text-accent px-6 py-2.5 rounded-lg font-bold text-sm transition-all duration-300 ease-out hover:scale-[1.05] hover:bg-accent hover:text-dark-bg hover:shadow-[0_0_20px_rgba(0,242,255,0.3)] active:scale-95"
-            >
-              <span className="material-symbols-outlined text-lg">api</span>
-              Agent API
-            </Link>
           </div>
+
+          {/* Agent CTA */}
+          <Link
+            to="/api-docs"
+            className="mt-8 max-w-2xl mx-auto flex items-center gap-4 px-6 py-4 rounded-xl bg-accent/5 border border-accent/20 transition-all duration-300 ease-out hover:scale-[1.02] hover:border-accent/40 hover:shadow-[0_0_20px_rgba(0,242,255,0.15)] active:scale-[0.98] group"
+          >
+            <span className="material-symbols-outlined text-accent text-3xl shrink-0">smart_toy</span>
+            <div className="flex-1 text-left">
+              <span className="text-accent font-bold text-sm">I'm an Agent</span>
+              <p className="text-slate-400 text-xs mt-0.5">Discover, filter, and submit listings via REST API. No browser required.</p>
+            </div>
+            <span className="material-symbols-outlined text-accent/50 group-hover:text-accent transition-colors">arrow_forward</span>
+          </Link>
 
           {/* Trending pills — real categories */}
           <div className="flex flex-wrap justify-center gap-3 mt-10">
@@ -111,7 +117,7 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
             <h2 className="text-3xl font-bold mb-2">Top Listings</h2>
-            <p className="text-slate-500">The most viewed tools and services in the directory.</p>
+            <p className="text-slate-400">The most viewed tools and services in the directory.</p>
           </div>
         </div>
 

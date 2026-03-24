@@ -1,11 +1,20 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { APP_NAME } from '../../lib/constants';
+import { useTheme, type Theme } from '../../lib/theme';
 
 export default function Header() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  const themeIcons: Record<Theme, string> = { light: 'light_mode', dark: 'dark_mode', system: 'monitor' };
+  const themeOrder: Theme[] = ['dark', 'light', 'system'];
+  function cycleTheme() {
+    const i = themeOrder.indexOf(theme);
+    setTheme(themeOrder[(i + 1) % themeOrder.length]);
+  }
 
   function handleSearchSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,10 +34,8 @@ export default function Header() {
             <h2 className="text-xl font-bold tracking-tight text-slate-100">{APP_NAME}</h2>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink to="/browse" className={({ isActive }) => `text-sm font-medium hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>Directory</NavLink>
-            <NavLink to="/submit" className={({ isActive }) => `text-sm font-medium hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>Submit</NavLink>
-            <NavLink to="/api-docs" className={({ isActive }) => `text-sm font-medium hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>API Docs</NavLink>
-            <NavLink to="/check-status" className={({ isActive }) => `text-sm font-medium hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>Check Status</NavLink>
+            <NavLink to="/browse" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>Directory</NavLink>
+            <NavLink to="/api-docs" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>For Agents</NavLink>
           </nav>
         </div>
         <div className="flex items-center gap-3">
@@ -42,7 +49,15 @@ export default function Header() {
               onChange={e => setSearch(e.target.value)}
             />
           </form>
-          <Link to="/submit" className="hidden sm:inline-flex bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_rgba(0,242,255,0.2)] hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95">
+          <button
+            onClick={cycleTheme}
+            className="p-2 text-slate-400 hover:text-primary transition-colors"
+            aria-label={`Theme: ${theme}`}
+            title={`Theme: ${theme}`}
+          >
+            <span className="material-symbols-outlined text-lg">{themeIcons[theme]}</span>
+          </button>
+          <Link to="/submit" className="hidden sm:inline-flex whitespace-nowrap bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg text-sm font-bold transition-all shadow-[0_0_15px_rgba(0,242,255,0.2)] hover:scale-[1.05] hover:shadow-[0_0_20px_rgba(55,19,236,0.4)] active:scale-95">
             Submit a Listing
           </Link>
           {/* Mobile menu toggle */}
@@ -61,8 +76,7 @@ export default function Header() {
         <nav className="md:hidden mt-4 pb-2 border-t border-primary/10 pt-4 space-y-3">
           <NavLink to="/browse" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>Directory</NavLink>
           <NavLink to="/submit" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>Submit</NavLink>
-          <NavLink to="/api-docs" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>API Docs</NavLink>
-          <NavLink to="/check-status" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>Check Status</NavLink>
+          <NavLink to="/api-docs" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>For Agents</NavLink>
         </nav>
       )}
     </header>

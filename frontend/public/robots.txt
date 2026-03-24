@@ -6,3 +6,4 @@ Allow: /
 # Agent Manifest: /.well-known/agent.json
 # AI Plugin Manifest: /.well-known/ai-plugin.json
 # Health Check: /api/health
+# LLM Info: /llms.txt

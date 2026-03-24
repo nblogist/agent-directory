@@ -11,6 +11,5 @@
     "type": "openapi",
     "url": "/api/openapi.json"
   },
-  "logo_url": "/favicon.svg",
-  "contact_email": "nblogist1@gmail.com"
+  "logo_url": "/favicon.svg"
 }

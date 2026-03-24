@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useListingsQuery } from '../hooks/useListingsQuery';
-import { fetchCategories, fetchChains } from '../lib/api';
+import { fetchCategories } from '../lib/api';
 import { getCategoryColor } from '../lib/categoryColors';
 import { APP_NAME } from '../lib/constants';
 import ListingLogo from '../components/ListingLogo';
@@ -12,7 +12,6 @@ export default function BrowsePage() {
   const { listings, meta, isLoading, error, filters, setFilter, clearFilters } = useListingsQuery();
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: fetchCategories });
-  const { data: chains } = useQuery({ queryKey: ['chains'], queryFn: fetchChains });
 
   const sortOptions = [
     { label: 'Most Popular', value: 'views' },
@@ -24,9 +23,9 @@ export default function BrowsePage() {
     <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
       <Helmet>
         <title>Browse Directory</title>
-        <meta name="description" content="Explore AI agents, tools, and services across the decentralized web." />
+        <meta name="description" content="Explore AI agents, tools, and services across the AI ecosystem." />
         <meta property="og:title" content={`Browse Directory | ${APP_NAME}`} />
-        <meta property="og:description" content="Explore AI agents, tools, and services across the decentralized web." />
+        <meta property="og:description" content="Explore AI agents, tools, and services across the AI ecosystem." />
         <meta property="og:type" content="website" />
       </Helmet>
       {/* Sidebar */}
@@ -84,7 +83,7 @@ export default function BrowsePage() {
               >
                 All Categories
               </button>
-              {(categories ?? []).map(cat => (
+              {(categories ?? []).filter(cat => cat.listing_count > 0).map(cat => (
                 <button
                   key={cat.slug}
                   onClick={() => setFilter('category', cat.slug)}
@@ -99,43 +98,15 @@ export default function BrowsePage() {
             </div>
           </div>
 
-          {/* Chain Filter */}
-          <div className="space-y-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Chain</h3>
-            <div className="space-y-1">
-              <button
-                onClick={() => setFilter('chain', undefined)}
-                className={`w-full text-left px-3 py-1.5 rounded-lg text-sm transition-colors ${
-                  !filters.chain ? 'text-primary font-semibold' : 'text-slate-400 hover:text-white'
-                }`}
-              >
-                All Chains
-              </button>
-              {(chains ?? []).map(chain => (
-                <button
-                  key={chain.slug}
-                  onClick={() => setFilter('chain', chain.slug)}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-sm flex items-center gap-2 transition-colors ${
-                    filters.chain === chain.slug ? 'text-primary font-semibold bg-primary/5' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  {chain.name}
-                  {chain.is_featured && (
-                    <span className="text-[9px] px-1.5 py-0.5 bg-amber-500/10 text-amber-500 rounded font-bold">Featured</span>
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </aside>
 
       {/* Main Content */}
       <section className="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar bg-dark-bg/30">
-        <div className="p-4 sm:p-6 lg:p-8">
+        <div className="p-4 sm:p-6 lg:px-12 lg:py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-black text-white leading-tight tracking-tight mb-2">Directory</h1>
-            <p className="text-slate-400 text-lg">Explore the most powerful AI-first tools and services.</p>
+            <p className="text-slate-300 text-lg">Explore the most powerful AI-first tools and services.</p>
           </div>
 
           {/* Search bar */}
@@ -243,11 +214,6 @@ export default function BrowsePage() {
                         </span>
                       );
                     })}
-                    {listing.chains.filter(c => c.is_featured).map(chain => (
-                      <span key={chain.id} className="bg-amber-500/10 text-amber-500 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded">
-                        {chain.name}
-                      </span>
-                    ))}
                   </div>
 
                   {listing.tags.length > 0 && (

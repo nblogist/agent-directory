@@ -32,6 +32,10 @@ export function AdminLayout() {
             <span className="material-symbols-outlined">dashboard</span>
             <span className="text-sm font-medium">Dashboard</span>
           </NavLink>
+          <NavLink to="/admin/api" className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${isActive ? 'bg-primary/10 text-primary' : 'text-slate-400 hover:bg-slate-800'}`}>
+            <span className="material-symbols-outlined">api</span>
+            <span className="text-sm font-medium">API Reference</span>
+          </NavLink>
         </nav>
         <div className="p-4 border-t border-slate-800 space-y-2">
           <a href="/submit" target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-2.5 rounded-lg transition-all text-sm">

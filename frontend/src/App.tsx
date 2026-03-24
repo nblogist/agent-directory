@@ -14,8 +14,10 @@ import ApiDocsPage from './pages/ApiDocsPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminEditListing from './pages/admin/AdminEditListing';
+import AdminApiReference from './pages/admin/AdminApiReference';
 import { AdminGuard } from './components/admin/AdminGuard';
 import { AdminLayout } from './components/admin/AdminLayout';
+import { ThemeProvider } from './lib/theme';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +30,7 @@ const queryClient = new QueryClient({
 
 export default function App() {
   return (
+    <ThemeProvider>
     <HelmetProvider>
       <Helmet defaultTitle={`${APP_NAME} | AI Agent Directory`} titleTemplate={`%s | ${APP_NAME}`} />
       <QueryClientProvider client={queryClient}>
@@ -42,6 +45,7 @@ export default function App() {
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/listings" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/listings/:id" element={<AdminEditListing />} />
+                <Route path="/admin/api" element={<AdminApiReference />} />
               </Route>
             </Route>
 
@@ -59,5 +63,6 @@ export default function App() {
         </BrowserRouter>
       </QueryClientProvider>
     </HelmetProvider>
+    </ThemeProvider>
   );
 }

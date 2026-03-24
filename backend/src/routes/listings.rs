@@ -745,23 +745,28 @@ pub async fn submit_listing(
         });
     }
 
-    // Validate tag format
-    static TAG_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
-        regex::Regex::new(r"^[a-z0-9][a-z0-9-]{0,59}$").expect("valid regex")
-    });
-    let tag_re = &*TAG_RE;
+    // Normalize and validate tags
+    // Normalization: trim, lowercase, strip special chars, collapse whitespace, spaces→dashes
+    // e.g. " MY   New-app!!!!!! " → "my-new-app"
     let mut validated_tags: Vec<String> = Vec::new();
     for tag_name_raw in &payload.tags {
-        let tag_name = tag_name_raw.trim().to_lowercase();
+        // Normalize: trim, lowercase, strip non-alphanumeric (keep spaces/hyphens), collapse whitespace, spaces→dashes
+        let normalized: String = tag_name_raw
+            .trim()
+            .to_lowercase()
+            .chars()
+            .filter(|c| c.is_alphanumeric() || *c == ' ' || *c == '-')
+            .collect::<String>();
+        // Collapse multiple spaces/hyphens into single hyphens
+        static COLLAPSE_RE: std::sync::LazyLock<regex::Regex> = std::sync::LazyLock::new(|| {
+            regex::Regex::new(r"[\s-]+").expect("valid regex")
+        });
+        let tag_name = COLLAPSE_RE.replace_all(&normalized, "-").trim_matches('-').to_string();
+
         if tag_name.is_empty() || tag_name.len() > 60 {
             errors.push(FieldError {
                 field: "tags".to_string(),
-                message: format!("tag '{}' must be 1-60 characters", tag_name_raw),
-            });
-        } else if !tag_re.is_match(&tag_name) {
-            errors.push(FieldError {
-                field: "tags".to_string(),
-                message: format!("tag '{}' must be lowercase alphanumeric and hyphens only (e.g. 'my-tag')", tag_name_raw),
+                message: format!("tag '{}' must be 1-60 characters after normalization", tag_name_raw),
             });
         } else {
             validated_tags.push(tag_name);

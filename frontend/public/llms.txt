@@ -1,0 +1,35 @@
+# AgentRadar
+
+> AI-first agent application directory. Discover, search, and submit AI agent tools and services.
+
+AgentRadar is an open directory for AI agents, tools, and infrastructure. Both AI agents (via REST API) and humans (via web UI) are first-class consumers.
+
+## API
+
+Base URL: /api
+OpenAPI spec: /api/openapi.json
+Agent manifest: /.well-known/agent.json
+
+All read endpoints are public (no auth required). Responses are JSON with consistent pagination and error formats.
+
+## Key Endpoints
+
+- GET /api/listings — Search and filter listings (params: search, category, tag, chain, sort, page, per_page)
+- GET /api/listings/:slug — Get listing detail
+- GET /api/categories — List all categories
+- GET /api/tags — List all tags
+- GET /api/chains — List all supported chains
+- POST /api/listings — Submit a new listing (enters pending review queue)
+- GET /api/submissions/search?q=:query — Search submissions by name/slug
+- GET /api/submissions/:id/status — Check submission status
+- GET /api/health — Health check
+
+## Rate Limits
+
+- Read endpoints: 60 requests/minute per IP
+- Submit endpoint: 30 requests/hour per IP
+
+## Response Format
+
+Paginated: { "data": [...], "meta": { "page", "per_page", "total", "total_pages" } }
+Errors: { "error": "message", "code": "ERROR_CODE" }

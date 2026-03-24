@@ -231,19 +231,13 @@ export default function SubmitPage() {
               <p className="text-xs text-slate-500 mt-1">Keep this safe — you can use it to <Link to="/check-status" className="text-primary hover:underline">check your submission status</Link>.</p>
             </div>
           )}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/check-status" className="bg-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-primary/90 transition-colors">
-              Check Submission Status
-            </Link>
-            <Link to="/browse" className="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-700 transition-colors">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center text-center">
+            <Link to="/browse" className="bg-primary text-white px-8 py-3 rounded-lg font-bold whitespace-nowrap hover:bg-primary/90 transition-colors">
               Browse Directory
             </Link>
-            <button
-              onClick={() => { mutation.reset(); setName(''); setShortDesc(''); setDescription(''); setWebsiteUrl(''); setLogoUrl(''); setGithubUrl(''); setDocsUrl(''); setApiEndpointUrl(''); setContactEmail(''); setSelectedCategories([]); setSelectedChains([]); setTags([]); setSuggestedChains([]); setFieldErrors({}); }}
-              className="bg-slate-800 text-white px-8 py-3 rounded-lg font-bold hover:bg-slate-700 transition-colors"
-            >
-              Submit Another
-            </button>
+            <Link to="/check-status" className="text-primary text-sm font-medium hover:underline">
+              Check submission status
+            </Link>
           </div>
         </div>
       </main>
@@ -264,11 +258,7 @@ export default function SubmitPage() {
         <div className="flex-1">
           <div className="mb-12">
             <h1 className="text-3xl sm:text-4xl font-bold mb-4">Listing Submission Form</h1>
-            <p className="text-slate-400 max-w-2xl">Provide essential details to list your tool in the directory. Fields marked with * are required.</p>
-            <div className="mt-4 px-4 py-3 bg-accent/5 border border-accent/20 rounded-lg inline-flex items-center gap-2 text-sm text-accent">
-              <span className="material-symbols-outlined text-lg">api</span>
-              <span>Submitting via API? Use <code className="font-mono bg-accent/10 px-1.5 py-0.5 rounded text-xs">POST /api/listings</code> -- no UI required. <Link to="/api-docs" className="underline font-bold hover:text-white transition-colors">View docs</Link></span>
-            </div>
+            <p className="text-slate-300 max-w-2xl">Provide essential details to list your tool in the directory. Fields marked with * are required.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-0" noValidate>
@@ -465,7 +455,7 @@ export default function SubmitPage() {
                         key={cat.id}
                         type="button"
                         onClick={() => toggleCategory(cat.id)}
-                        className={`border p-3 rounded-xl text-sm font-medium text-left transition-all ${
+                        className={`border p-3 rounded-xl text-xs font-medium text-left transition-all leading-snug ${
                           selectedCategories.includes(cat.id)
                             ? 'border-primary bg-primary/10 text-primary'
                             : 'border-white/10 text-slate-400 hover:border-primary'
@@ -640,10 +630,10 @@ export default function SubmitPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="material-symbols-outlined text-accent">verified</span>
+                  <span className="material-symbols-outlined text-accent">smart_toy</span>
                   <div>
-                    <div className="font-bold text-sm">Verified Badge</div>
-                    <p className="text-xs text-white/70">Boost trust and ranking in the directory.</p>
+                    <div className="font-bold text-sm">Agent-First</div>
+                    <p className="text-xs text-white/70">Discoverable by AI agents via API and manifests.</p>
                   </div>
                 </div>
               </div>
@@ -653,26 +643,26 @@ export default function SubmitPage() {
             <div className="bg-dark-surface border border-white/10 p-6 rounded-2xl">
               <h4 className="font-bold text-sm mb-4">Onboarding Checklist</h4>
               <ul className="space-y-3 text-xs text-slate-400">
-                <li className="flex items-start gap-2">
-                  <span className={`material-symbols-outlined text-sm ${contactEmail ? 'text-emerald-500' : 'text-slate-600'}`}>
+                <li className="flex items-center gap-2">
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${contactEmail ? 'text-emerald-500' : 'text-slate-600'}`}>
                     {contactEmail ? 'check_circle' : 'circle'}
                   </span>
                   Contact Email (Required)
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className={`material-symbols-outlined text-sm ${name && shortDesc && description && websiteUrl ? 'text-emerald-500' : 'text-slate-600'}`}>
+                <li className="flex items-center gap-2">
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${name && shortDesc && description && websiteUrl ? 'text-emerald-500' : 'text-slate-600'}`}>
                     {name && shortDesc && description && websiteUrl ? 'check_circle' : 'circle'}
                   </span>
                   Listing Details (Required)
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className={`material-symbols-outlined text-sm ${selectedCategories.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
+                <li className="flex items-center gap-2">
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedCategories.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
                     {selectedCategories.length > 0 ? 'check_circle' : 'circle'}
                   </span>
                   Category Selection (Required)
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className={`material-symbols-outlined text-sm ${selectedChains.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
+                <li className="flex items-center gap-2">
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedChains.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
                     {selectedChains.length > 0 ? 'check_circle' : 'circle'}
                   </span>
                   Chain Integration (Optional)

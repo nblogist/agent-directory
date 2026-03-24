@@ -43,7 +43,7 @@ function ResultCard({ result }: { result: SubmissionStatusResponse }) {
         <StatusBadge status={result.status} />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+      <div className="space-y-2 text-sm">
         <div>
           <span className="text-slate-500">Submitted:</span>{' '}
           <span className="text-slate-300">{formatDate(result.submitted_at)}</span>
@@ -114,7 +114,7 @@ export default function CheckStatusPage() {
 
       <div className="mb-10">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Check Submission Status</h1>
-        <p className="text-slate-400 max-w-xl">
+        <p className="text-slate-300 max-w-xl">
           Enter your listing name or slug to check its review status. Results appear as you type.
         </p>
       </div>

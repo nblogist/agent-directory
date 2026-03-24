@@ -4,19 +4,48 @@
 @theme {
   --color-primary: #3713ec;
   --color-accent: #00f2ff;
-  --color-dark-bg: #131022;
-  --color-dark-surface: #1d1c27;
-  --color-dark-surface2: #1c1930;
-  --color-dark-border: #2b2839;
+  --color-dark-bg: var(--theme-bg);
+  --color-dark-surface: var(--theme-surface);
+  --color-dark-surface2: var(--theme-surface2);
+  --color-dark-border: var(--theme-border);
+  --color-theme-text: var(--theme-text);
+  --color-theme-text-secondary: var(--theme-text-secondary);
+  --color-theme-text-muted: var(--theme-text-muted);
   --font-sans: 'Space Grotesk', sans-serif;
   --radius-sm: 0.25rem;
   --radius-lg: 0.5rem;
   --radius-xl: 0.75rem;
 }
 
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
+  --theme-bg: #131022;
+  --theme-surface: #1d1c27;
+  --theme-surface2: #1c1930;
+  --theme-border: #2b2839;
+  --theme-text: #f1f5f9;
+  --theme-text-secondary: #cbd5e1;
+  --theme-text-muted: #94a3b8;
+  color-scheme: dark;
+}
+
+/* Light theme */
+[data-theme="light"] {
+  --theme-bg: #f8fafc;
+  --theme-surface: #ffffff;
+  --theme-surface2: #f1f5f9;
+  --theme-border: #e2e8f0;
+  --theme-text: #0f172a;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #94a3b8;
+  color-scheme: light;
+}
+
 @layer base {
   body {
-    @apply bg-dark-bg text-white antialiased;
+    @apply bg-dark-bg antialiased;
+    color: var(--theme-text);
     font-family: 'Space Grotesk', sans-serif;
   }
 
@@ -26,12 +55,93 @@
   }
 }
 
-/* Neon glow effect for hero text */
-.neon-glow {
+/* Light theme overrides for elements using slate/white directly */
+[data-theme="light"] {
+  /* Text that was white in dark mode */
+  .text-white { color: var(--theme-text); }
+  .text-slate-100 { color: var(--theme-text); }
+  .text-slate-200 { color: #1e293b; }
+  .text-slate-300 { color: #334155; }
+  .text-slate-400 { color: #475569; }
+  .text-slate-500 { color: #64748b; }
+  .text-slate-600 { color: #94a3b8; }
+
+  /* Backgrounds */
+  .bg-dark-bg\/80 { background: rgba(248, 250, 252, 0.8); }
+  .bg-dark-bg\/30 { background: rgba(248, 250, 252, 0.3); }
+  .bg-dark-bg\/50 { background: rgba(248, 250, 252, 0.5); }
+  .bg-slate-800 { background-color: #e2e8f0; }
+  .bg-slate-800\/50 { background-color: rgba(226, 232, 240, 0.5); }
+  .bg-slate-800\/60 { background-color: rgba(226, 232, 240, 0.6); }
+  .bg-slate-900 { background-color: #f1f5f9; }
+  .bg-slate-950 { background-color: #e2e8f0; }
+
+  /* Borders */
+  .border-primary\/20 { border-color: rgba(55, 19, 236, 0.18); }
+  .border-primary\/10 { border-color: rgba(55, 19, 236, 0.15); }
+  .border-white\/10 { border-color: #e2e8f0; }
+  .border-slate-800 { border-color: #e2e8f0; }
+  .border-slate-700 { border-color: #cbd5e1; }
+
+  /* Input backgrounds */
+  .bg-primary\/10 { background-color: rgba(55, 19, 236, 0.06); }
+  .bg-primary\/5 { background-color: rgba(55, 19, 236, 0.04); }
+  .bg-white\/5 { background-color: rgba(0, 0, 0, 0.02); }
+
+  /* Form inputs inside white containers need visible bg */
+  input, textarea, select {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: rgba(55, 19, 236, 0.4) !important;
+  }
+
+  /* Shadows — softer in light mode */
+  .shadow-2xl { box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); }
+  .shadow-xl { box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06); }
+
+  /* Hover states */
+  .hover\:bg-slate-700:hover { background-color: #cbd5e1; }
+  .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.03); }
+  .hover\:text-white:hover { color: var(--theme-text); }
+  .hover\:bg-dark-surface2:hover { background-color: #e2e8f0; }
+  .hover\:border-primary\/50:hover { border-color: rgba(55, 19, 236, 0.3); }
+  .hover\:border-primary\/30:hover { border-color: rgba(55, 19, 236, 0.25); }
+
+  /* Glass card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Placeholder text */
+  .placeholder-slate-500::placeholder,
+  .placeholder\:text-slate-500::placeholder { color: #94a3b8; }
+
+  /* Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+
+  /* Neon glow - softer in light mode */
+  .neon-glow {
+    text-shadow: none;
+  }
+}
+
+/* Dark theme text contrast — bump slate text so it's readable on dark bg */
+[data-theme="dark"] {
+  .text-slate-300 { color: #e2e8f0; }
+  .text-slate-400 { color: #cbd5e1; }
+  .text-slate-500 { color: #94a3b8; }
+  .text-slate-600 { color: #64748b; }
+}
+
+/* Neon glow effect for hero text (dark mode) */
+[data-theme="dark"] .neon-glow,
+:root .neon-glow {
   text-shadow: 0 0 10px rgba(55, 19, 236, 0.5), 0 0 20px rgba(55, 19, 236, 0.3);
 }
 
-/* Glass card utility */
+/* Glass card utility (dark mode default) */
 .glass-card {
   background: rgba(29, 28, 39, 0.7);
   backdrop-filter: blur(12px);
