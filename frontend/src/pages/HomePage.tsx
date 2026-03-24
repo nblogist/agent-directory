@@ -213,10 +213,10 @@ export default function HomePage() {
                       <td className="px-4 sm:px-6 py-5 text-right">
                         <Link
                           to={`/listings/${listing.slug}`}
-                          className="text-primary hover:text-accent transition-colors"
+                          className="text-theme-text-muted hover:text-primary transition-colors"
                           onClick={e => e.stopPropagation()}
                         >
-                          <span className="material-symbols-outlined">chevron_right</span>
+                          <span className="material-symbols-outlined">arrow_forward</span>
                         </Link>
                       </td>
                     </tr>
