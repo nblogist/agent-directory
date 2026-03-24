@@ -30,7 +30,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           <div className="text-center max-w-md">
             <span className="material-symbols-outlined text-6xl text-red-400 mb-4">error</span>
             <h1 className="text-2xl font-bold mb-2">Something went wrong</h1>
-            <p className="text-slate-400 mb-6 text-sm">
+            <p className="text-theme-text-secondary mb-6 text-sm">
               An unexpected error occurred. Please refresh the page to try again.
             </p>
             <button

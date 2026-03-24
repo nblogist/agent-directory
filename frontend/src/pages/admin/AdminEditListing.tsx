@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: 'bg-red-900/30 text-red-400',
 };
 
-const inputClass = 'w-full bg-dark-bg border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500';
+const inputClass = 'w-full bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-sm text-theme-text placeholder:text-theme-text-muted';
 
 export default function AdminEditListing() {
   const { id } = useParams<{ id: string }>();
@@ -157,9 +157,9 @@ export default function AdminEditListing() {
   if (isLoading) {
     return (
       <div className="p-8 animate-pulse space-y-6">
-        <div className="h-6 w-32 bg-slate-800 rounded" />
-        <div className="h-8 w-64 bg-slate-800 rounded" />
-        <div className="h-40 bg-slate-800/40 rounded-xl" />
+        <div className="h-6 w-32 bg-dark-surface rounded" />
+        <div className="h-8 w-64 bg-dark-surface rounded" />
+        <div className="h-40 bg-dark-surface/40 rounded-xl" />
       </div>
     );
   }
@@ -168,9 +168,9 @@ export default function AdminEditListing() {
     const is404 = error instanceof Error && 'status' in error && (error as { status: number }).status === 404;
     return (
       <div className="p-8 text-center py-20">
-        <span className="material-symbols-outlined text-4xl text-slate-600 mb-4">{is404 ? 'error_outline' : 'cloud_off'}</span>
+        <span className="material-symbols-outlined text-4xl text-theme-text-muted mb-4">{is404 ? 'error_outline' : 'cloud_off'}</span>
         <h2 className="text-xl font-bold mb-2">{is404 ? 'Listing Not Found' : 'Failed to Load'}</h2>
-        <p className="text-slate-400 text-sm mb-4">{is404 ? '' : 'Something went wrong. Please try again.'}</p>
+        <p className="text-theme-text-secondary text-sm mb-4">{is404 ? '' : 'Something went wrong. Please try again.'}</p>
         <Link to="/admin/dashboard" className="text-primary hover:underline text-sm">Back to Listings</Link>
       </div>
     );
@@ -179,7 +179,7 @@ export default function AdminEditListing() {
   if (!listing) {
     return (
       <div className="p-8 text-center py-20">
-        <span className="material-symbols-outlined text-4xl text-slate-600 mb-4">error_outline</span>
+        <span className="material-symbols-outlined text-4xl text-theme-text-muted mb-4">error_outline</span>
         <h2 className="text-xl font-bold mb-2">Listing Not Found</h2>
         <Link to="/admin/dashboard" className="text-primary hover:underline text-sm">Back to Listings</Link>
       </div>
@@ -190,12 +190,12 @@ export default function AdminEditListing() {
     <div className="p-8 max-w-5xl">
       {/* Back + Title */}
       <div className="flex items-center gap-4 mb-8">
-        <Link to="/admin/dashboard" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+        <Link to="/admin/dashboard" className="p-2 hover:bg-dark-surface rounded-lg transition-colors">
           <span className="material-symbols-outlined">arrow_back</span>
         </Link>
         <div className="flex-1">
           <h2 className="text-2xl font-black tracking-tight">{listing.name}</h2>
-          <p className="text-sm text-slate-400">{listing.slug}</p>
+          <p className="text-sm text-theme-text-secondary">{listing.slug}</p>
         </div>
         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold capitalize ${STATUS_STYLES[listing.status] ?? ''}`}>
           {listing.status}
@@ -224,14 +224,14 @@ export default function AdminEditListing() {
         <button
           onClick={() => editing ? updateMutation.mutate() : startEditing()}
           disabled={updateMutation.isPending}
-          className="px-4 py-2 bg-slate-700 text-white rounded-lg text-sm font-bold hover:bg-slate-600 transition-colors disabled:opacity-50"
+          className="px-4 py-2 bg-dark-surface2 text-theme-text rounded-lg text-sm font-bold hover:bg-dark-border transition-colors disabled:opacity-50"
         >
           {editing ? 'Save Changes' : 'Edit'}
         </button>
         {editing && (
           <button
             onClick={() => setEditing(false)}
-            className="px-4 py-2 text-slate-400 text-sm font-bold hover:text-white transition-colors"
+            className="px-4 py-2 text-theme-text-secondary text-sm font-bold hover:text-theme-text transition-colors"
           >
             Cancel
           </button>
@@ -248,16 +248,16 @@ export default function AdminEditListing() {
       {/* Reject Modal */}
       {showRejectModal && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
-          <div className="bg-dark-surface border border-slate-800 rounded-xl p-6 w-full max-w-md space-y-4">
+          <div className="bg-dark-surface border border-dark-border rounded-xl p-6 w-full max-w-md space-y-4">
             <h3 className="font-bold text-lg">Reject Listing</h3>
             <textarea
-              className="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 min-h-[100px]"
+              className="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-3 text-sm text-theme-text placeholder:text-theme-text-muted min-h-[100px]"
               placeholder="Rejection reason (optional)"
               value={rejectNote}
               onChange={e => setRejectNote(e.target.value)}
             />
             <div className="flex justify-end gap-3">
-              <button onClick={() => setShowRejectModal(false)} className="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setShowRejectModal(false)} className="px-4 py-2 text-sm font-bold text-theme-text-secondary hover:text-theme-text transition-colors">
                 Cancel
               </button>
               <button
@@ -276,13 +276,13 @@ export default function AdminEditListing() {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Identity */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider">Listing Details</h3>
+          <div className="bg-dark-surface/40 border border-dark-border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-sm uppercase text-theme-text-secondary tracking-wider">Listing Details</h3>
             <div className="flex items-start gap-4">
               {editing ? (
                 <div className="flex flex-col items-center gap-2 flex-shrink-0">
                   <ListingLogo name={editName || listing.name} logoUrl={editLogoUrl || null} size="size-16" textSize="text-xl" />
-                  <label className="text-[10px] text-slate-500 cursor-pointer hover:text-primary transition-colors flex items-center gap-0.5">
+                  <label className="text-[10px] text-theme-text-muted cursor-pointer hover:text-primary transition-colors flex items-center gap-0.5">
                     <span className="material-symbols-outlined !text-[10px]">edit</span>
                     Logo
                   </label>
@@ -294,30 +294,30 @@ export default function AdminEditListing() {
                 {editing ? (
                   <>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">Name</label>
+                      <label className="block text-xs text-theme-text-muted mb-1">Name</label>
                       <input className={inputClass} value={editName} onChange={e => setEditName(e.target.value)} />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">Short Description</label>
+                      <label className="block text-xs text-theme-text-muted mb-1">Short Description</label>
                       <input className={inputClass} value={editShortDesc} onChange={e => setEditShortDesc(e.target.value)} maxLength={140} />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">Description <span className="text-slate-600 font-normal">(Markdown supported)</span></label>
+                      <label className="block text-xs text-theme-text-muted mb-1">Description <span className="text-theme-text-muted font-normal">(Markdown supported)</span></label>
                       <textarea className={`${inputClass} min-h-[120px]`} value={editDesc} onChange={e => setEditDesc(e.target.value)} />
                     </div>
                     <div>
-                      <label className="block text-xs text-slate-500 mb-1">Logo URL <span className="text-slate-600 font-normal">(leave empty for auto-generated)</span></label>
+                      <label className="block text-xs text-theme-text-muted mb-1">Logo URL <span className="text-theme-text-muted font-normal">(leave empty for auto-generated)</span></label>
                       <input className={inputClass} type="text" placeholder="https://example.com/logo.png" value={editLogoUrl} onChange={e => setEditLogoUrl(e.target.value)} />
                     </div>
                   </>
                 ) : (
                   <>
                     <div>
-                      <p className="text-xs text-slate-500">Short Description</p>
+                      <p className="text-xs text-theme-text-muted">Short Description</p>
                       <p className="text-sm">{listing.short_description}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 mb-2">Full Description</p>
+                      <p className="text-xs text-theme-text-muted mb-2">Full Description</p>
                       <MarkdownRenderer content={listing.description} />
                     </div>
                   </>
@@ -327,48 +327,48 @@ export default function AdminEditListing() {
           </div>
 
           {/* URLs */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider">URLs</h3>
+          <div className="bg-dark-surface/40 border border-dark-border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-sm uppercase text-theme-text-secondary tracking-wider">URLs</h3>
             {editing ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">Website URL</label>
+                  <label className="block text-xs text-theme-text-muted mb-1">Website URL</label>
                   <input className={inputClass} type="text" value={editWebsiteUrl} onChange={e => setEditWebsiteUrl(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">GitHub URL</label>
+                  <label className="block text-xs text-theme-text-muted mb-1">GitHub URL</label>
                   <input className={inputClass} type="text" placeholder="https://github.com/..." value={editGithubUrl} onChange={e => setEditGithubUrl(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">Docs URL</label>
+                  <label className="block text-xs text-theme-text-muted mb-1">Docs URL</label>
                   <input className={inputClass} type="text" placeholder="https://docs.example.com" value={editDocsUrl} onChange={e => setEditDocsUrl(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">API Endpoint</label>
+                  <label className="block text-xs text-theme-text-muted mb-1">API Endpoint</label>
                   <input className={inputClass} type="text" placeholder="https://api.example.com" value={editApiEndpointUrl} onChange={e => setEditApiEndpointUrl(e.target.value)} />
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Website</p>
+                  <p className="text-xs text-theme-text-muted mb-1">Website</p>
                   <a href={listing.website_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{listing.website_url}</a>
                 </div>
                 {listing.github_url && (
                   <div>
-                    <p className="text-xs text-slate-500 mb-1">GitHub</p>
+                    <p className="text-xs text-theme-text-muted mb-1">GitHub</p>
                     <a href={listing.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{listing.github_url}</a>
                   </div>
                 )}
                 {listing.docs_url && (
                   <div>
-                    <p className="text-xs text-slate-500 mb-1">Docs</p>
+                    <p className="text-xs text-theme-text-muted mb-1">Docs</p>
                     <a href={listing.docs_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{listing.docs_url}</a>
                   </div>
                 )}
                 {listing.api_endpoint_url && (
                   <div>
-                    <p className="text-xs text-slate-500 mb-1">API Endpoint</p>
+                    <p className="text-xs text-theme-text-muted mb-1">API Endpoint</p>
                     <a href={listing.api_endpoint_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">{listing.api_endpoint_url}</a>
                   </div>
                 )}
@@ -377,13 +377,13 @@ export default function AdminEditListing() {
           </div>
 
           {/* Categories, Tags, Chains */}
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider">Classification</h3>
+          <div className="bg-dark-surface/40 border border-dark-border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-sm uppercase text-theme-text-secondary tracking-wider">Classification</h3>
             {editing ? (
               <div className="space-y-5">
                 {/* Categories — toggle from all available */}
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Categories</p>
+                  <p className="text-xs text-theme-text-muted mb-2">Categories</p>
                   <div className="flex flex-wrap gap-2">
                     {(allCategories ?? []).map(cat => {
                       const selected = editCategoryIds.includes(cat.id);
@@ -396,7 +396,7 @@ export default function AdminEditListing() {
                           className={`text-xs font-bold px-2.5 py-1 rounded transition-all ${
                             selected
                               ? `${c.bg} ${c.text} ring-1 ring-current`
-                              : 'bg-slate-800/50 text-slate-500 hover:text-slate-300'
+                              : 'bg-dark-surface/50 text-theme-text-muted hover:text-theme-text-secondary'
                           }`}
                         >
                           {cat.name}
@@ -426,8 +426,8 @@ export default function AdminEditListing() {
 
                 {/* Tags — chip input */}
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Tags</p>
-                  <div className="flex flex-wrap gap-2 p-2.5 bg-dark-bg border border-white/10 rounded-lg min-h-[40px] items-center">
+                  <p className="text-xs text-theme-text-muted mb-2">Tags</p>
+                  <div className="flex flex-wrap gap-2 p-2.5 bg-dark-bg border border-dark-border rounded-lg min-h-[40px] items-center">
                     {editTags.map(tag => (
                       <span key={tag} className="flex items-center gap-1 px-2.5 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium">
                         {tag}
@@ -437,7 +437,7 @@ export default function AdminEditListing() {
                       </span>
                     ))}
                     <input
-                      className="flex-1 min-w-[100px] bg-transparent border-none focus:ring-0 text-xs text-slate-100 placeholder-slate-500 outline-none"
+                      className="flex-1 min-w-[100px] bg-transparent border-none focus:ring-0 text-xs text-theme-text placeholder:text-theme-text-muted outline-none"
                       placeholder={editTags.length === 0 ? 'Type and press Enter...' : ''}
                       value={tagInput}
                       onChange={e => setTagInput(e.target.value)}
@@ -449,7 +449,7 @@ export default function AdminEditListing() {
 
                 {/* Chains — toggle from all available */}
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Chains</p>
+                  <p className="text-xs text-theme-text-muted mb-2">Chains</p>
                   <div className="flex flex-wrap gap-2">
                     {(allChains ?? []).map(chain => {
                       const selected = editChainIds.includes(chain.id);
@@ -463,7 +463,7 @@ export default function AdminEditListing() {
                               ? chain.is_featured
                                 ? 'bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/50'
                                 : 'bg-primary/10 text-primary ring-1 ring-primary/50'
-                              : 'bg-slate-800/50 text-slate-500 hover:text-slate-300'
+                              : 'bg-dark-surface/50 text-theme-text-muted hover:text-theme-text-secondary'
                           }`}
                         >
                           {chain.name}
@@ -494,7 +494,7 @@ export default function AdminEditListing() {
             ) : (
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Categories</p>
+                  <p className="text-xs text-theme-text-muted mb-2">Categories</p>
                   <div className="flex flex-wrap gap-2">
                     {listing.categories.map(cat => {
                       const c = getCategoryColor(cat.slug);
@@ -502,30 +502,30 @@ export default function AdminEditListing() {
                         <span key={cat.id} className={`${c.bg} ${c.text} text-xs font-bold px-2.5 py-1 rounded`}>{cat.name}</span>
                       );
                     })}
-                    {listing.categories.length === 0 && <span className="text-xs text-slate-600">None</span>}
+                    {listing.categories.length === 0 && <span className="text-xs text-theme-text-muted">None</span>}
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Tags</p>
+                  <p className="text-xs text-theme-text-muted mb-2">Tags</p>
                   <div className="flex flex-wrap gap-2">
                     {listing.tags.map(tag => (
-                      <span key={tag.id} className="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded">{tag.name}</span>
+                      <span key={tag.id} className="text-xs bg-dark-bg text-theme-text-secondary px-2.5 py-1 rounded">{tag.name}</span>
                     ))}
-                    {listing.tags.length === 0 && <span className="text-xs text-slate-600">None</span>}
+                    {listing.tags.length === 0 && <span className="text-xs text-theme-text-muted">None</span>}
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-2">Chains</p>
+                  <p className="text-xs text-theme-text-muted mb-2">Chains</p>
                   <div className="flex flex-wrap gap-2">
                     {listing.chains.map(chain => (
                       <span
                         key={chain.id}
-                        className={`text-xs font-bold px-2.5 py-1 rounded ${chain.is_featured ? 'bg-amber-500/10 text-amber-500' : 'bg-slate-800 text-slate-300'}`}
+                        className={`text-xs font-bold px-2.5 py-1 rounded ${chain.is_featured ? 'bg-amber-500/10 text-amber-500' : 'bg-dark-surface text-theme-text-secondary'}`}
                       >
                         {chain.name}
                       </span>
                     ))}
-                    {listing.chains.length === 0 && <span className="text-xs text-slate-600">None</span>}
+                    {listing.chains.length === 0 && <span className="text-xs text-theme-text-muted">None</span>}
                   </div>
                 </div>
               </div>
@@ -535,11 +535,11 @@ export default function AdminEditListing() {
 
         {/* Sidebar Info */}
         <div className="space-y-6">
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6 space-y-4">
-            <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider">Metadata</h3>
+          <div className="bg-dark-surface/40 border border-dark-border rounded-xl p-6 space-y-4">
+            <h3 className="font-bold text-sm uppercase text-theme-text-secondary tracking-wider">Metadata</h3>
             <div className="space-y-3 text-sm">
               <div>
-                <span className="text-slate-500 text-xs">Contact Email</span>
+                <span className="text-theme-text-muted text-xs">Contact Email</span>
                 {editing ? (
                   <input className={`${inputClass} mt-1`} type="email" value={editContactEmail} onChange={e => setEditContactEmail(e.target.value)} />
                 ) : (
@@ -547,44 +547,44 @@ export default function AdminEditListing() {
                 )}
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Views</span>
+                <span className="text-theme-text-muted">Views</span>
                 <span className="font-medium">{listing.view_count.toLocaleString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Reputation</span>
+                <span className="text-theme-text-muted">Reputation</span>
                 <span className="font-medium">{listing.reputation_score ?? 'N/A'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Submitted</span>
+                <span className="text-theme-text-muted">Submitted</span>
                 <span>{new Date(listing.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Updated</span>
+                <span className="text-theme-text-muted">Updated</span>
                 <span>{new Date(listing.updated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
               </div>
               {listing.approved_at && (
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Approved</span>
+                  <span className="text-theme-text-muted">Approved</span>
                   <span className="text-emerald-400">{new Date(listing.approved_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                 </div>
               )}
               {listing.rejection_note && (
-                <div className="pt-3 border-t border-slate-800">
-                  <p className="text-xs text-slate-500 mb-1">Rejection Note</p>
+                <div className="pt-3 border-t border-dark-border">
+                  <p className="text-xs text-theme-text-muted mb-1">Rejection Note</p>
                   <p className="text-sm text-red-400">{listing.rejection_note}</p>
                 </div>
               )}
             </div>
           </div>
 
-          <div className="bg-slate-900/40 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-sm uppercase text-slate-400 tracking-wider mb-3">Quick Actions</h3>
+          <div className="bg-dark-surface/40 border border-dark-border rounded-xl p-6">
+            <h3 className="font-bold text-sm uppercase text-theme-text-secondary tracking-wider mb-3">Quick Actions</h3>
             <div className="space-y-2">
               <a
                 href={`/listings/${listing.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg text-sm font-medium hover:bg-slate-700 transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-dark-surface2 text-theme-text rounded-lg text-sm font-medium hover:bg-dark-border transition-colors"
               >
                 <span className="material-symbols-outlined text-sm">open_in_new</span>
                 View Public Page

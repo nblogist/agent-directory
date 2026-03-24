@@ -111,7 +111,7 @@ export default function AdminDashboard() {
     <div className="p-8">
       <div className="mb-8">
         <h2 className="text-3xl font-black tracking-tight mb-2">Submissions Management</h2>
-        <p className="text-slate-400">Review and moderate submissions for the directory — agents, tools, protocols, and infrastructure.</p>
+        <p className="text-theme-text-secondary">Review and moderate submissions for the directory: agents, tools, protocols, and infrastructure.</p>
       </div>
 
       {actionError && (
@@ -127,10 +127,10 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {statsLoading ? (
           Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="p-6 rounded-xl border border-slate-800 bg-slate-900/40 animate-pulse">
-              <div className="h-8 w-8 bg-slate-800 rounded-lg mb-4" />
-              <div className="h-4 w-20 bg-slate-800 rounded mb-2" />
-              <div className="h-8 w-16 bg-slate-800 rounded" />
+            <div key={i} className="p-6 rounded-xl border border-dark-border bg-dark-surface/40 animate-pulse">
+              <div className="h-8 w-8 bg-dark-surface rounded-lg mb-4" />
+              <div className="h-4 w-20 bg-dark-surface rounded mb-2" />
+              <div className="h-8 w-16 bg-dark-surface rounded" />
             </div>
           ))
         ) : statsError ? (
@@ -139,28 +139,28 @@ export default function AdminDashboard() {
           </div>
         ) : stats ? (
           <>
-            <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="p-6 rounded-xl border border-dark-border bg-dark-surface/40">
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2 bg-primary/10 text-primary rounded-lg material-symbols-outlined">list_alt</span>
               </div>
-              <p className="text-slate-400 text-sm font-medium">Total Listings</p>
+              <p className="text-theme-text-secondary text-sm font-medium">Total Listings</p>
               <h3 className="text-3xl font-bold">{stats.total.toLocaleString()}</h3>
             </div>
-            <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="p-6 rounded-xl border border-dark-border bg-dark-surface/40">
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2 bg-amber-500/10 text-amber-500 rounded-lg material-symbols-outlined">pending_actions</span>
                 {stats.pending > 0 && (
                   <span className="text-xs font-bold text-amber-500 bg-amber-500/10 px-2 py-1 rounded">Action Required</span>
                 )}
               </div>
-              <p className="text-slate-400 text-sm font-medium">Pending Reviews</p>
+              <p className="text-theme-text-secondary text-sm font-medium">Pending Reviews</p>
               <h3 className="text-3xl font-bold">{stats.pending}</h3>
             </div>
-            <div className="p-6 rounded-xl border border-slate-800 bg-slate-900/40">
+            <div className="p-6 rounded-xl border border-dark-border bg-dark-surface/40">
               <div className="flex items-center justify-between mb-4">
                 <span className="p-2 bg-emerald-500/10 text-emerald-500 rounded-lg material-symbols-outlined">visibility</span>
               </div>
-              <p className="text-slate-400 text-sm font-medium">Total Views</p>
+              <p className="text-theme-text-secondary text-sm font-medium">Total Views</p>
               <h3 className="text-3xl font-bold">
                 {stats.total_views >= 1000
                   ? `${(stats.total_views / 1000).toFixed(1)}k`
@@ -172,9 +172,9 @@ export default function AdminDashboard() {
       </div>
 
       {/* Submissions Table */}
-      <div className="bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden">
+      <div className="bg-dark-surface/40 rounded-xl border border-dark-border overflow-hidden">
         {/* Tabs */}
-        <div className="px-6 py-4 border-b border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="px-6 py-4 border-b border-dark-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex gap-4">
             {TABS.map(tab => (
               <button
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
                 className={`text-sm pb-4 -mb-[18px] transition-colors ${
                   statusFilter === tab.value
                     ? 'font-bold text-primary border-b-2 border-primary'
-                    : 'font-medium text-slate-400 hover:text-slate-200'
+                    : 'font-medium text-theme-text-secondary hover:text-theme-text'
                 }`}
               >
                 {tab.label}
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-800/30 text-slate-400 uppercase text-[10px] font-bold tracking-widest">
+              <tr className="bg-dark-surface/30 text-theme-text-secondary uppercase text-[10px] font-bold tracking-widest">
                 <th className="px-6 py-4">Listing Name</th>
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Status</th>
@@ -205,7 +205,7 @@ export default function AdminDashboard() {
                 <th className="px-6 py-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+            <tbody className="divide-y divide-dark-border">
               {listingsError ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-red-400">
@@ -217,37 +217,37 @@ export default function AdminDashboard() {
                   <tr key={i} className="animate-pulse">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-slate-800 rounded" />
+                        <div className="w-8 h-8 bg-dark-surface rounded" />
                         <div>
-                          <div className="h-4 w-28 bg-slate-800 rounded mb-1" />
-                          <div className="h-3 w-20 bg-slate-800 rounded" />
+                          <div className="h-4 w-28 bg-dark-surface rounded mb-1" />
+                          <div className="h-3 w-20 bg-dark-surface rounded" />
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4"><div className="h-4 w-20 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-4"><div className="h-4 w-16 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-4"><div className="h-5 w-9 bg-slate-800 rounded-full mx-auto" /></td>
-                    <td className="px-6 py-4"><div className="h-4 w-10 bg-slate-800 rounded" /></td>
-                    <td className="px-6 py-4"><div className="h-4 w-24 bg-slate-800 rounded ml-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-20 bg-dark-surface rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-16 bg-dark-surface rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-5 w-9 bg-dark-surface rounded-full mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-10 bg-dark-surface rounded" /></td>
+                    <td className="px-6 py-4"><div className="h-4 w-24 bg-dark-surface rounded ml-auto" /></td>
                   </tr>
                 ))
               ) : listings.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">No listings found.</td>
+                  <td colSpan={6} className="px-6 py-12 text-center text-theme-text-muted">No listings found.</td>
                 </tr>
               ) : (
                 listings.map(row => (
-                  <tr key={row.id} className="hover:bg-slate-800/20 transition-colors">
+                  <tr key={row.id} className="hover:bg-dark-surface/20 transition-colors">
                     <td className="px-6 py-4">
                       <Link to={`/admin/listings/${row.id}`} className="flex items-center gap-3 hover:text-primary transition-colors">
                         <ListingLogo name={row.name} logoUrl={row.logo_url} size="w-8 h-8" textSize="text-[10px]" rounded="rounded" />
                         <div>
                           <p className="font-bold text-sm">{row.name}</p>
-                          <p className="text-[11px] text-slate-400 line-clamp-1">{row.short_description}</p>
+                          <p className="text-[11px] text-theme-text-secondary line-clamp-1">{row.short_description}</p>
                         </div>
                       </Link>
                     </td>
-                    <td className="px-6 py-4 text-sm text-slate-400">
+                    <td className="px-6 py-4 text-sm text-theme-text-secondary">
                       {new Date(row.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                     <td className="px-6 py-4">
@@ -261,7 +261,7 @@ export default function AdminDashboard() {
                           onClick={() => toggleFeaturedMutation.mutate(row.id)}
                           disabled={toggleFeaturedMutation.isPending}
                           className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none disabled:opacity-50 ${
-                            row.is_featured ? 'bg-primary' : 'bg-slate-700'
+                            row.is_featured ? 'bg-primary' : 'bg-dark-border'
                           }`}
                         >
                           <span
@@ -284,7 +284,7 @@ export default function AdminDashboard() {
                             Approve
                           </button>
                         )}
-                        <Link to={`/admin/listings/${row.id}`} className="text-xs font-bold text-slate-400 hover:text-slate-200">
+                        <Link to={`/admin/listings/${row.id}`} className="text-xs font-bold text-theme-text-secondary hover:text-theme-text">
                           Edit
                         </Link>
                         {row.status !== 'rejected' ? (
@@ -298,7 +298,7 @@ export default function AdminDashboard() {
                           <button
                             onClick={() => { if (confirm('Delete this listing permanently?')) deleteMutation.mutate(row.id); }}
                             disabled={deleteMutation.isPending}
-                            className="text-xs font-bold text-slate-500 hover:text-red-400 disabled:opacity-50"
+                            className="text-xs font-bold text-theme-text-muted hover:text-red-400 disabled:opacity-50"
                           >
                             Delete
                           </button>
@@ -313,8 +313,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Pagination */}
-        <div className="px-6 py-4 border-t border-slate-800 flex items-center justify-between">
-          <p className="text-xs text-slate-400">
+        <div className="px-6 py-4 border-t border-dark-border flex items-center justify-between">
+          <p className="text-xs text-theme-text-secondary">
             {meta.total > 0
               ? `Showing ${(meta.page - 1) * meta.per_page + 1} to ${Math.min(meta.page * meta.per_page, meta.total)} of ${meta.total} entries`
               : 'No entries'}
@@ -324,7 +324,7 @@ export default function AdminDashboard() {
               <button
                 disabled={meta.page <= 1}
                 onClick={() => setPage(p => p - 1)}
-                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1 px-3 border border-dark-border rounded text-xs font-bold hover:bg-dark-surface disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Previous
               </button>
@@ -333,7 +333,7 @@ export default function AdminDashboard() {
                   key={i + 1}
                   onClick={() => setPage(i + 1)}
                   className={`p-1 px-3 rounded text-xs font-bold ${
-                    meta.page === i + 1 ? 'bg-primary text-white' : 'border border-slate-800 hover:bg-slate-800'
+                    meta.page === i + 1 ? 'bg-primary text-white' : 'border border-dark-border hover:bg-dark-surface'
                   }`}
                 >
                   {i + 1}
@@ -342,7 +342,7 @@ export default function AdminDashboard() {
               <button
                 disabled={meta.page >= meta.total_pages}
                 onClick={() => setPage(p => p + 1)}
-                className="p-1 px-3 border border-slate-800 rounded text-xs font-bold hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+                className="p-1 px-3 border border-dark-border rounded text-xs font-bold hover:bg-dark-surface disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 Next
               </button>
@@ -353,20 +353,20 @@ export default function AdminDashboard() {
 
       {/* Chain Suggestions */}
       {chainSuggestions && chainSuggestions.length > 0 && (
-        <div className="mt-8 bg-slate-900/40 rounded-xl border border-slate-800 overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+        <div className="mt-8 bg-dark-surface/40 rounded-xl border border-dark-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-dark-border flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="material-symbols-outlined text-amber-500">link</span>
               <h3 className="font-bold text-sm">Pending Chain Suggestions</h3>
               <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full font-bold">{chainSuggestions.length}</span>
             </div>
           </div>
-          <div className="divide-y divide-slate-800">
+          <div className="divide-y divide-dark-border">
             {chainSuggestions.map(s => (
               <div key={s.id} className="px-6 py-4 flex items-center justify-between">
                 <div>
                   <p className="font-bold text-sm">{s.name}</p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-theme-text-muted">
                     Suggested {new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </p>
                 </div>
@@ -395,23 +395,23 @@ export default function AdminDashboard() {
       {/* Reject Modal */}
       {rejectTarget && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-700 rounded-xl p-6 w-full max-w-md shadow-2xl">
+          <div className="bg-dark-surface border border-dark-border rounded-xl p-6 w-full max-w-md shadow-2xl">
             <h3 className="text-lg font-bold mb-1">Reject Listing</h3>
-            <p className="text-sm text-slate-400 mb-4">
-              Rejecting <span className="text-white font-medium">{rejectTarget.name}</span>
+            <p className="text-sm text-theme-text-secondary mb-4">
+              Rejecting <span className="text-theme-text font-medium">{rejectTarget.name}</span>
             </p>
-            <label className="block text-sm text-slate-400 mb-2">Rejection note (optional)</label>
+            <label className="block text-sm text-theme-text-secondary mb-2">Rejection note (optional)</label>
             <textarea
               value={rejectNote}
               onChange={e => setRejectNote(e.target.value)}
               rows={3}
               placeholder="Reason for rejection..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:ring-1 focus:ring-primary resize-none"
+              className="w-full bg-dark-surface2 border border-dark-border rounded-lg px-3 py-2 text-sm placeholder:text-theme-text-muted focus:ring-1 focus:ring-primary resize-none"
             />
             <div className="flex justify-end gap-3 mt-4">
               <button
                 onClick={() => { setRejectTarget(null); setRejectNote(''); }}
-                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                className="px-4 py-2 text-sm font-medium text-theme-text-secondary hover:text-theme-text transition-colors"
               >
                 Cancel
               </button>

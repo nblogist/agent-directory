@@ -38,7 +38,7 @@ export default function AdminLogin() {
         <div className="text-center mb-8">
           <span className="material-symbols-outlined text-primary text-4xl">deployed_code</span>
           <h1 className="text-2xl font-bold mt-3">{APP_NAME} Admin</h1>
-          <p className="text-slate-400 text-sm mt-1">Enter your admin token to continue</p>
+          <p className="text-theme-text-secondary text-sm mt-1">Enter your admin token to continue</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

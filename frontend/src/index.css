@@ -11,6 +11,7 @@
   --color-theme-text: var(--theme-text);
   --color-theme-text-secondary: var(--theme-text-secondary);
   --color-theme-text-muted: var(--theme-text-muted);
+  --color-on-accent: #0f172a;
   --font-sans: 'Space Grotesk', sans-serif;
   --radius-sm: 0.25rem;
   --radius-lg: 0.5rem;
@@ -32,13 +33,13 @@
 
 /* Light theme */
 [data-theme="light"] {
-  --theme-bg: #f8fafc;
+  --theme-bg: #f1f5f9;
   --theme-surface: #ffffff;
-  --theme-surface2: #f1f5f9;
-  --theme-border: #e2e8f0;
+  --theme-surface2: #f8fafc;
+  --theme-border: #c1ccd6;
   --theme-text: #0f172a;
   --theme-text-secondary: #475569;
-  --theme-text-muted: #94a3b8;
+  --theme-text-muted: #64748b;
   color-scheme: light;
 }
 
@@ -55,68 +56,60 @@
   }
 }
 
-/* Light theme overrides for elements using slate/white directly */
+/* Light theme overrides */
 [data-theme="light"] {
-  /* Text that was white in dark mode */
-  .text-white { color: var(--theme-text); }
-  .text-slate-100 { color: var(--theme-text); }
-  .text-slate-200 { color: #1e293b; }
-  .text-slate-300 { color: #334155; }
-  .text-slate-400 { color: #475569; }
-  .text-slate-500 { color: #64748b; }
-  .text-slate-600 { color: #94a3b8; }
+  /* Page background opacities */
+  .bg-dark-bg\/80 { background: rgba(241, 245, 249, 0.92); }
+  .bg-dark-bg\/30 { background: rgba(241, 245, 249, 0.4); }
+  .bg-dark-bg\/50 { background: rgba(241, 245, 249, 0.85); }
 
-  /* Backgrounds */
-  .bg-dark-bg\/80 { background: rgba(248, 250, 252, 0.8); }
-  .bg-dark-bg\/30 { background: rgba(248, 250, 252, 0.3); }
-  .bg-dark-bg\/50 { background: rgba(248, 250, 252, 0.5); }
-  .bg-slate-800 { background-color: #e2e8f0; }
-  .bg-slate-800\/50 { background-color: rgba(226, 232, 240, 0.5); }
-  .bg-slate-800\/60 { background-color: rgba(226, 232, 240, 0.6); }
-  .bg-slate-900 { background-color: #f1f5f9; }
-  .bg-slate-950 { background-color: #e2e8f0; }
+  /* Surface opacities — white cards need to pop on gray bg */
+  .bg-dark-surface\/40 { background-color: rgba(255, 255, 255, 0.88); }
+  .bg-dark-surface\/30 { background-color: rgba(255, 255, 255, 0.6); }
+  .bg-dark-surface\/20 { background-color: rgba(255, 255, 255, 0.35); }
+  .bg-dark-surface\/50 { background-color: rgba(255, 255, 255, 0.92); }
+  .bg-dark-surface\/60 { background-color: rgba(255, 255, 255, 0.92); }
+  .bg-dark-surface2\/50 { background-color: rgba(255, 255, 255, 0.75); }
+
+  /* Hover surface opacities */
+  .hover\:bg-dark-surface\/20:hover { background-color: #f1f5f9; }
 
   /* Borders */
-  .border-primary\/20 { border-color: rgba(55, 19, 236, 0.18); }
-  .border-primary\/10 { border-color: rgba(55, 19, 236, 0.15); }
-  .border-white\/10 { border-color: #e2e8f0; }
-  .border-slate-800 { border-color: #e2e8f0; }
-  .border-slate-700 { border-color: #cbd5e1; }
+  .border-primary\/20 { border-color: rgba(55, 19, 236, 0.25); }
+  .border-primary\/10 { border-color: rgba(55, 19, 236, 0.18); }
+  .border-primary\/15 { border-color: rgba(55, 19, 236, 0.22); }
 
   /* Input backgrounds */
-  .bg-primary\/10 { background-color: rgba(55, 19, 236, 0.06); }
-  .bg-primary\/5 { background-color: rgba(55, 19, 236, 0.04); }
-  .bg-white\/5 { background-color: rgba(0, 0, 0, 0.02); }
+  .bg-primary\/10 { background-color: rgba(55, 19, 236, 0.08); }
+  .bg-primary\/5 { background-color: rgba(55, 19, 236, 0.05); }
 
-  /* Form inputs inside white containers need visible bg */
-  input, textarea, select {
+  /* Form inputs with dark-bg class need visible bg in light mode */
+  .bg-dark-bg:is(input, textarea, select),
+  input.bg-dark-bg, textarea.bg-dark-bg, select.bg-dark-bg {
     background-color: #f1f5f9 !important;
-    border-color: #e2e8f0;
+    border-color: #c1ccd6;
   }
-  input:focus, textarea:focus, select:focus {
+  input.bg-dark-bg:focus, textarea.bg-dark-bg:focus, select.bg-dark-bg:focus {
     border-color: rgba(55, 19, 236, 0.4) !important;
   }
 
-  /* Shadows — softer in light mode */
-  .shadow-2xl { box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08); }
-  .shadow-xl { box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06); }
+  /* Shadows — real depth in light mode */
+  .shadow-2xl { box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.06); }
+  .shadow-xl { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04); }
+  .shadow-lg { box-shadow: 0 2px 15px rgba(0, 0, 0, 0.07), 0 1px 3px rgba(0, 0, 0, 0.04); }
 
   /* Hover states */
-  .hover\:bg-slate-700:hover { background-color: #cbd5e1; }
-  .hover\:bg-white\/5:hover { background-color: rgba(0, 0, 0, 0.03); }
-  .hover\:text-white:hover { color: var(--theme-text); }
+  .hover\:bg-dark-surface:hover { background-color: #f1f5f9; }
   .hover\:bg-dark-surface2:hover { background-color: #e2e8f0; }
+  .hover\:bg-dark-border:hover { background-color: #cbd5e1; }
   .hover\:border-primary\/50:hover { border-color: rgba(55, 19, 236, 0.3); }
   .hover\:border-primary\/30:hover { border-color: rgba(55, 19, 236, 0.25); }
 
   /* Glass card */
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
-
-  /* Placeholder text */
-  .placeholder-slate-500::placeholder,
-  .placeholder\:text-slate-500::placeholder { color: #94a3b8; }
 
   /* Scrollbar */
   .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
@@ -125,20 +118,58 @@
   .neon-glow {
     text-shadow: none;
   }
-}
 
-/* Dark theme text contrast — bump slate text so it's readable on dark bg */
-[data-theme="dark"] {
-  .text-slate-300 { color: #e2e8f0; }
-  .text-slate-400 { color: #cbd5e1; }
-  .text-slate-500 { color: #94a3b8; }
-  .text-slate-600 { color: #64748b; }
+  /* Status: Success (emerald/green) — remap -400 to -600 for readability on light bg */
+  .text-emerald-400 { color: #059669; }
+  .text-emerald-500 { color: #059669; }
+  .text-green-400 { color: #16a34a; }
+  .bg-emerald-500\/10 { background-color: #ecfdf5; }
+  .bg-green-900\/30 { background-color: #ecfdf5; }
+
+  /* Status: Warning / Featured (amber) */
+  .text-amber-400 { color: #d97706; }
+  .text-amber-500 { color: #d97706; }
+  .bg-amber-500\/10 { background-color: #fffbeb; }
+  .bg-amber-900\/30 { background-color: #fffbeb; }
+  .ring-amber-500\/50 { --tw-ring-color: rgba(217, 119, 6, 0.25); }
+
+  /* Status: Error / Danger (red) */
+  .text-red-300 { color: #dc2626; }
+  .text-red-400 { color: #dc2626; }
+  .text-red-500 { color: #dc2626; }
+  .bg-red-500\/10 { background-color: #fef2f2; }
+  .bg-red-500\/5 { background-color: #fef2f2; }
+  .bg-red-900\/30 { background-color: #fef2f2; }
+  .border-red-500\/20 { border-color: rgba(220, 38, 38, 0.2); }
+
+  /* Status: Info (blue) */
+  .text-blue-400 { color: #2563eb; }
+  .bg-blue-500\/10 { background-color: #eff6ff; }
+
+  /* Category badge colors */
+  .text-purple-400 { color: #7c3aed; }
+  .text-cyan-400 { color: #0891b2; }
+  .text-pink-400 { color: #db2777; }
+
+  /* Slate (fallback category, misc text) */
+  .text-slate-400 { color: #64748b; }
+  .text-slate-500 { color: #475569; }
+  .bg-slate-500\/10 { background-color: #f1f5f9; }
+
+  /* Skeleton loaders */
+  .bg-slate-800 { background-color: #e2e8f0; }
+  .bg-slate-800\/60 { background-color: rgba(226, 232, 240, 0.6); }
+
+  /* Hover states */
+  .hover\:text-red-400:hover { color: #dc2626; }
+  .hover\:text-red-300:hover { color: #dc2626; }
+  .hover\:bg-red-400\/5:hover { background-color: #fef2f2; }
 }
 
 /* Neon glow effect for hero text (dark mode) */
 [data-theme="dark"] .neon-glow,
 :root .neon-glow {
-  text-shadow: 0 0 10px rgba(55, 19, 236, 0.5), 0 0 20px rgba(55, 19, 236, 0.3);
+  text-shadow: 0 0 8px rgba(55, 19, 236, 0.4), 0 0 16px rgba(55, 19, 236, 0.15);
 }
 
 /* Glass card utility (dark mode default) */
@@ -180,6 +211,6 @@
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #2b2839;
+  background: var(--theme-border);
   border-radius: 10px;
 }

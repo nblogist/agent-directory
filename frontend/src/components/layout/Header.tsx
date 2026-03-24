@@ -31,18 +31,18 @@ export default function Header() {
         <div className="flex items-center gap-6 lg:gap-12">
           <Link to="/" className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-3xl">deployed_code</span>
-            <h2 className="text-xl font-bold tracking-tight text-slate-100">{APP_NAME}</h2>
+            <h2 className="text-xl font-bold tracking-tight text-theme-text">{APP_NAME}</h2>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
-            <NavLink to="/browse" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>Directory</NavLink>
-            <NavLink to="/api-docs" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : ''}`}>For Agents</NavLink>
+            <NavLink to="/browse" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-theme-text-secondary'}`}>Directory</NavLink>
+            <NavLink to="/api-docs" className={({ isActive }) => `text-sm font-medium whitespace-nowrap hover:text-primary transition-colors ${isActive ? 'text-primary' : 'text-theme-text-secondary'}`}>For Agents</NavLink>
           </nav>
         </div>
         <div className="flex items-center gap-3">
           <form onSubmit={handleSearchSubmit} className="relative hidden lg:block">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-secondary text-lg">search</span>
             <input
-              className="bg-primary/10 border-none rounded-lg pl-10 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary"
+              className="bg-dark-surface border border-dark-border rounded-lg pl-10 pr-4 py-2 text-sm w-64 text-theme-text placeholder:text-theme-text-muted focus:ring-2 focus:ring-primary focus:border-primary"
               placeholder="Search tools, services, platforms..."
               type="text"
               value={search}
@@ -51,7 +51,7 @@ export default function Header() {
           </form>
           <button
             onClick={cycleTheme}
-            className="p-2 text-slate-400 hover:text-primary transition-colors"
+            className="p-2 text-theme-text-secondary hover:text-primary transition-colors"
             aria-label={`Theme: ${theme}`}
             title={`Theme: ${theme}`}
           >
@@ -63,7 +63,7 @@ export default function Header() {
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(v => !v)}
-            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors"
+            className="md:hidden p-2 text-theme-text-secondary hover:text-theme-text transition-colors"
             aria-label="Toggle menu"
           >
             <span className="material-symbols-outlined">{mobileMenuOpen ? 'close' : 'menu'}</span>
@@ -74,9 +74,9 @@ export default function Header() {
       {/* Mobile menu */}
       {mobileMenuOpen && (
         <nav className="md:hidden mt-4 pb-2 border-t border-primary/10 pt-4 space-y-3">
-          <NavLink to="/browse" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>Directory</NavLink>
-          <NavLink to="/submit" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>Submit</NavLink>
-          <NavLink to="/api-docs" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-slate-400 hover:text-white'}`}>For Agents</NavLink>
+          <NavLink to="/browse" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-theme-text-secondary hover:text-theme-text'}`}>Directory</NavLink>
+          <NavLink to="/submit" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-theme-text-secondary hover:text-theme-text'}`}>Submit</NavLink>
+          <NavLink to="/api-docs" onClick={() => setMobileMenuOpen(false)} className={({ isActive }) => `block text-sm font-medium px-2 py-1.5 rounded-lg transition-colors ${isActive ? 'text-primary bg-primary/5' : 'text-theme-text-secondary hover:text-theme-text'}`}>For Agents</NavLink>
         </nav>
       )}
     </header>

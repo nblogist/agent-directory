@@ -22,7 +22,7 @@ function FieldError({ error }: { error?: string }) {
 }
 
 function inputBorder(error?: string) {
-  return error ? 'border-red-500/50' : 'border-white/10';
+  return error ? 'border-red-500/50' : 'border-dark-border';
 }
 
 export default function SubmitPage() {
@@ -80,7 +80,18 @@ export default function SubmitPage() {
   }
 
   function toggleChain(id: string) {
-    setSelectedChains(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
+    const chain = chains?.find(c => c.id === id);
+    const isChainAgnostic = chain?.slug === 'chain-agnostic';
+
+    setSelectedChains(prev => {
+      if (prev.includes(id)) return prev.filter(c => c !== id);
+      // If selecting chain-agnostic, deselect everything else
+      if (isChainAgnostic) return [id];
+      // If selecting a specific chain, deselect chain-agnostic
+      const agnosticId = chains?.find(c => c.slug === 'chain-agnostic')?.id;
+      const filtered = agnosticId ? prev.filter(c => c !== agnosticId) : prev;
+      return [...filtered, id];
+    });
   }
 
   function addChainSuggestion() {
@@ -93,7 +104,7 @@ export default function SubmitPage() {
     }
     const existingMatch = (chains ?? []).find(c => c.name.toLowerCase() === name.toLowerCase());
     if (existingMatch) {
-      setChainSuggestionError(`"${existingMatch.name}" already exists — select it from the list above instead.`);
+      setChainSuggestionError(`"${existingMatch.name}" already exists. Select it from the list above instead.`);
       return;
     }
     if (suggestedChains.some(s => s.toLowerCase() === name.toLowerCase())) {
@@ -220,15 +231,15 @@ export default function SubmitPage() {
         <div className="bg-dark-surface p-12 rounded-2xl border border-primary/20 shadow-xl">
           <span className="material-symbols-outlined text-6xl text-emerald-500 mb-6" style={filledStyle}>check_circle</span>
           <h1 className="text-3xl font-bold mb-4">Submission Received!</h1>
-          <p className="text-slate-400 mb-2">
+          <p className="text-theme-text-secondary mb-2">
             Your listing <span className="text-primary font-bold">{name}</span> has been submitted for review.
           </p>
-          <p className="text-slate-500 text-sm mb-4">Our team will review it shortly. You'll see it in the directory once approved.</p>
+          <p className="text-theme-text-muted text-sm mb-4">Our team will review it shortly. You'll see it in the directory once approved.</p>
           {mutation.data?.slug && (
-            <div className="bg-slate-800/60 border border-slate-700 rounded-lg px-4 py-3 mb-8 text-left">
-              <p className="text-xs text-slate-400 mb-1">Your listing reference:</p>
+            <div className="bg-dark-surface/60 border border-dark-border rounded-lg px-4 py-3 mb-8 text-left">
+              <p className="text-xs text-theme-text-secondary mb-1">Your listing reference:</p>
               <p className="text-sm font-mono text-primary font-bold">{mutation.data.slug}</p>
-              <p className="text-xs text-slate-500 mt-1">Keep this safe — you can use it to <Link to="/check-status" className="text-primary hover:underline">check your submission status</Link>.</p>
+              <p className="text-xs text-theme-text-muted mt-1">Keep this safe. You can use it to <Link to="/check-status" className="text-primary hover:underline">check your submission status</Link>.</p>
             </div>
           )}
           <div className="flex flex-col sm:flex-row gap-4 justify-center text-center">
@@ -258,7 +269,7 @@ export default function SubmitPage() {
         <div className="flex-1">
           <div className="mb-12">
             <h1 className="text-3xl sm:text-4xl font-bold mb-4">Listing Submission Form</h1>
-            <p className="text-slate-300 max-w-2xl">Provide essential details to list your tool in the directory. Fields marked with * are required.</p>
+            <p className="text-theme-text-secondary max-w-2xl">Provide essential details to list your tool in the directory. Fields marked with * are required.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-0" noValidate>
@@ -269,14 +280,14 @@ export default function SubmitPage() {
               </div>
               <h2 className="text-xl font-bold">1. Contact Information</h2>
             </div>
-            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-dark-border shadow-xl space-y-6">
               <div data-field="email">
-                <label className="block text-sm font-bold mb-2 text-slate-300">
+                <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
                   Contact Email<span className="text-primary ml-1">*</span>
-                  <span className="text-slate-500 font-normal ml-2 text-[10px]">(Internal only — not displayed publicly)</span>
+                  <span className="text-theme-text-muted font-normal ml-2 text-[10px]">(Internal only, not displayed publicly)</span>
                 </label>
                 <input
-                  className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.email)}`}
+                  className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.email)}`}
                   placeholder="dev@example.com"
                   type="text"
                   value={contactEmail}
@@ -293,12 +304,12 @@ export default function SubmitPage() {
               </div>
               <h2 className="text-xl font-bold">2. Listing Details</h2>
             </div>
-            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-dark-border shadow-xl space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="col-span-2 md:col-span-1" data-field="name">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">Listing Name<span className="text-primary ml-1">*</span></label>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">Listing Name<span className="text-primary ml-1">*</span></label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.name)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.name)}`}
                     placeholder="e.g., Nova Sentry"
                     type="text"
                     maxLength={100}
@@ -308,9 +319,9 @@ export default function SubmitPage() {
                   <FieldError error={fieldErrors.name} />
                 </div>
                 <div className="col-span-2 md:col-span-1" data-field="website">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">Website URL<span className="text-primary ml-1">*</span></label>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">Website URL<span className="text-primary ml-1">*</span></label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.website)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.website)}`}
                     placeholder="https://myproject.ai"
                     type="text"
                     value={websiteUrl}
@@ -325,12 +336,12 @@ export default function SubmitPage() {
                   <FieldError error={fieldErrors.website} />
                 </div>
                 <div className="col-span-2" data-field="shortDesc">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
                     Short Description<span className="text-primary ml-1">*</span>
-                    <span className="text-slate-500 font-normal ml-2 text-[10px]">({shortDesc.length}/140)</span>
+                    <span className="text-theme-text-muted font-normal ml-2 text-[10px]">({shortDesc.length}/140)</span>
                   </label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.shortDesc)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.shortDesc)}`}
                     placeholder="One-liner for card previews (max 140 chars)"
                     type="text"
                     maxLength={140}
@@ -341,15 +352,15 @@ export default function SubmitPage() {
                 </div>
                 <div className="col-span-2" data-field="description">
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-sm font-bold text-slate-300">
+                    <label className="text-sm font-bold text-theme-text-secondary">
                       Full Description<span className="text-primary ml-1">*</span>
-                      <span className="text-slate-500 font-normal ml-2 text-[10px]">Markdown supported</span>
+                      <span className="text-theme-text-muted font-normal ml-2 text-[10px]">Markdown supported</span>
                     </label>
                     {description && (
                       <button
                         type="button"
                         onClick={() => setShowPreview(p => !p)}
-                        className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-primary transition-colors"
+                        className="flex items-center gap-1.5 text-xs font-medium text-theme-text-secondary hover:text-primary transition-colors"
                       >
                         <span className="material-symbols-outlined text-sm">{showPreview ? 'edit' : 'visibility'}</span>
                         {showPreview ? 'Edit' : 'Preview'}
@@ -357,12 +368,12 @@ export default function SubmitPage() {
                     )}
                   </div>
                   {showPreview ? (
-                    <div className="w-full bg-dark-bg border border-white/10 rounded-xl px-4 py-3 min-h-[120px]">
+                    <div className="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-3 min-h-[120px]">
                       <MarkdownRenderer content={description} />
                     </div>
                   ) : (
                     <textarea
-                      className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border min-h-[120px] ${inputBorder(fieldErrors.description)}`}
+                      className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border min-h-[120px] ${inputBorder(fieldErrors.description)}`}
                       placeholder="Detailed description of your tool or service. Supports **bold**, *italic*, ## headings, - lists, and more."
                       minLength={10}
                       value={description}
@@ -372,11 +383,11 @@ export default function SubmitPage() {
                   <FieldError error={fieldErrors.description} />
                 </div>
                 <div className="col-span-2 md:col-span-1" data-field="logo">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
-                    Logo URL <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
+                    Logo URL <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional)</span>
                   </label>
                   <input
-                    className={`w-full bg-dark-bg border rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 ${fieldErrors.logo ? 'border-red-500/50' : logoWarning ? 'border-amber-500/50' : 'border-white/10'}`}
+                    className={`w-full bg-dark-bg border rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted ${fieldErrors.logo ? 'border-red-500/50' : logoWarning ? 'border-amber-500/50' : 'border-dark-border'}`}
                     placeholder="https://example.com/logo.png"
                     type="text"
                     value={logoUrl}
@@ -402,16 +413,16 @@ export default function SubmitPage() {
                       {logoWarning}
                     </p>
                   )}
-                  <p className="text-slate-500 text-[10px] mt-1.5 leading-relaxed">
+                  <p className="text-theme-text-muted text-[10px] mt-1.5 leading-relaxed">
                     Square icon recommended (min 128x128px). Accepted formats: PNG, JPG, SVG, WebP. Max 500KB.
                   </p>
                 </div>
                 <div className="col-span-2 md:col-span-1" data-field="github">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
-                    GitHub URL <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
+                    GitHub URL <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional)</span>
                   </label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.github)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.github)}`}
                     placeholder="https://github.com/your-org/repo"
                     type="text"
                     value={githubUrl}
@@ -420,11 +431,11 @@ export default function SubmitPage() {
                   <FieldError error={fieldErrors.github} />
                 </div>
                 <div className="col-span-2 md:col-span-1" data-field="docs">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
-                    Docs URL <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
+                    Docs URL <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional)</span>
                   </label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.docs)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.docs)}`}
                     placeholder="https://docs.myproject.ai"
                     type="text"
                     value={docsUrl}
@@ -433,11 +444,11 @@ export default function SubmitPage() {
                   <FieldError error={fieldErrors.docs} />
                 </div>
                 <div className="col-span-2 md:col-span-1" data-field="api">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
-                    API Endpoint <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
+                    API Endpoint <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional)</span>
                   </label>
                   <input
-                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border ${inputBorder(fieldErrors.api)}`}
+                    className={`w-full bg-dark-bg rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border ${inputBorder(fieldErrors.api)}`}
                     placeholder="https://api.myproject.ai"
                     type="text"
                     value={apiEndpointUrl}
@@ -448,7 +459,7 @@ export default function SubmitPage() {
 
                 {/* Category selection */}
                 <div className="col-span-2" data-field="categories">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">Category<span className="text-primary ml-1">*</span></label>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">Category<span className="text-primary ml-1">*</span></label>
                   <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 ${fieldErrors.categories ? 'ring-1 ring-red-500/30 rounded-xl p-2 -m-2' : ''}`}>
                     {(categories ?? []).map(cat => (
                       <button
@@ -458,7 +469,7 @@ export default function SubmitPage() {
                         className={`border p-3 rounded-xl text-xs font-medium text-left transition-all leading-snug ${
                           selectedCategories.includes(cat.id)
                             ? 'border-primary bg-primary/10 text-primary'
-                            : 'border-white/10 text-slate-400 hover:border-primary'
+                            : 'border-dark-border text-theme-text-secondary hover:border-primary'
                         }`}
                       >
                         {cat.name}
@@ -470,10 +481,10 @@ export default function SubmitPage() {
 
                 {/* Tags input */}
                 <div className="col-span-2">
-                  <label className="block text-sm font-bold mb-2 text-slate-300">
-                    Tags <span className="text-slate-400 font-normal ml-1 text-xs">(Optional — press Enter to add)</span>
+                  <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
+                    Tags <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional, press Enter to add)</span>
                   </label>
-                  <div className="flex flex-wrap gap-2 p-3 bg-dark-bg border border-white/10 rounded-xl min-h-[48px] items-center">
+                  <div className="flex flex-wrap gap-2 p-3 bg-dark-bg border border-dark-border rounded-xl min-h-[48px] items-center">
                     {tags.map(tag => (
                       <span key={tag} className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary/10 text-primary text-sm font-medium">
                         {tag}
@@ -483,7 +494,7 @@ export default function SubmitPage() {
                       </span>
                     ))}
                     <input
-                      className="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-slate-100 placeholder-slate-500 outline-none"
+                      className="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-theme-text placeholder:text-theme-text-muted outline-none"
                       placeholder={tags.length === 0 ? 'e.g., defi, automation, analytics' : ''}
                       value={tagInput}
                       onChange={e => setTagInput(e.target.value)}
@@ -500,10 +511,10 @@ export default function SubmitPage() {
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
                 <span className="material-symbols-outlined">hub</span>
               </div>
-              <h2 className="text-xl font-bold">3. Chain Integration <span className="text-slate-400 font-normal ml-1 text-xs">(Optional)</span></h2>
+              <h2 className="text-xl font-bold">3. Chain Integration <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional)</span></h2>
             </div>
-            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-white/10 shadow-xl space-y-6">
-              <label className="block text-sm font-bold mb-2 text-slate-300">Select supported chains</label>
+            <div className="bg-dark-surface p-4 sm:p-8 rounded-2xl border border-dark-border shadow-xl space-y-6">
+              <label className="block text-sm font-bold mb-2 text-theme-text-secondary">Select supported chains</label>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {(chains ?? []).map(chain => {
                   const isSelected = selectedChains.includes(chain.id);
@@ -511,54 +522,35 @@ export default function SubmitPage() {
                     <div
                       key={chain.id}
                       onClick={() => toggleChain(chain.id)}
-                      className={`border p-4 rounded-xl flex items-center gap-3 cursor-pointer transition-all relative overflow-hidden ${
+                      className={`border p-4 rounded-xl flex items-center gap-3 cursor-pointer transition-all ${
                         isSelected
-                          ? chain.is_featured
-                            ? 'border-amber-500/50 bg-amber-500/5 ring-1 ring-amber-500/50'
-                            : 'border-primary bg-primary/10 ring-1 ring-primary'
-                          : 'border-white/10 bg-white/5 hover:border-primary'
+                          ? 'border-primary bg-primary/10 ring-1 ring-primary'
+                          : 'border-dark-border bg-dark-surface hover:border-primary'
                       }`}
                     >
-                      {chain.is_featured && (
-                        <div className={`absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider flex items-center gap-1 shadow-sm ${
-                          isSelected
-                            ? 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
-                            : 'bg-slate-700/50 text-slate-400 border border-slate-600/30'
-                        }`}>
-                          <span className="material-symbols-outlined !text-[10px]" style={filledStyle}>stars</span>
-                          Featured
-                        </div>
-                      )}
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        chain.is_featured && isSelected ? 'bg-amber-500/20' : 'bg-slate-800'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center bg-dark-bg`}>
                         <span className={`material-symbols-outlined text-2xl ${
-                          chain.is_featured && isSelected ? 'text-amber-500' : isSelected ? 'text-primary' : 'text-slate-400'
+                          isSelected ? 'text-primary' : 'text-theme-text-secondary'
                         }`}>
-                          {chain.is_featured ? 'toll' : 'link'}
+                          link
                         </span>
                       </div>
-                      <div>
-                        <div className="text-sm font-bold">{chain.name}</div>
-                        {chain.is_featured && isSelected && (
-                          <div className="text-[9px] text-amber-500 font-bold uppercase tracking-tight">Cost-Efficient</div>
-                        )}
-                      </div>
+                      <div className="text-sm font-bold">{chain.name}</div>
                     </div>
                   );
                 })}
               </div>
 
               {/* Suggest Other Chain */}
-              <div className="pt-6 border-t border-white/10">
-                <label className="block text-sm font-bold mb-2 text-slate-300">
+              <div className="pt-6 border-t border-dark-border">
+                <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
                   Don't see your chain? Suggest one
-                  <span className="text-slate-500 font-normal ml-2 text-[10px]">(will be reviewed by admin)</span>
+                  <span className="text-theme-text-muted font-normal ml-2 text-[10px]">(will be reviewed by admin)</span>
                 </label>
                 <div className="flex gap-3">
                   <input
                     type="text"
-                    className="flex-1 bg-dark-bg border-white/10 rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-slate-100 placeholder-slate-500 border"
+                    className="flex-1 bg-dark-bg border-dark-border rounded-xl px-4 py-3 focus:ring-primary focus:border-primary text-sm text-theme-text placeholder:text-theme-text-muted border"
                     placeholder="e.g., Solana, Polkadot, Avalanche..."
                     value={chainSuggestionInput}
                     onChange={e => { setChainSuggestionInput(e.target.value); setChainSuggestionError(''); }}
@@ -568,7 +560,7 @@ export default function SubmitPage() {
                   <button
                     type="button"
                     onClick={addChainSuggestion}
-                    className="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-bold transition-colors"
+                    className="px-5 py-3 bg-dark-surface2 hover:bg-dark-border text-theme-text rounded-xl text-sm font-bold transition-colors"
                   >
                     Add
                   </button>
@@ -582,7 +574,7 @@ export default function SubmitPage() {
                 {suggestedChains.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     {suggestedChains.map(sc => (
-                      <span key={sc} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 text-sm font-medium">
+                      <span key={sc} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-bg text-theme-text-secondary text-sm font-medium">
                         {sc}
                         <button type="button" onClick={() => setSuggestedChains(prev => prev.filter(s => s !== sc))} className="hover:text-red-400 transition-colors ml-1">
                           <span className="material-symbols-outlined text-xs">close</span>
@@ -602,15 +594,15 @@ export default function SubmitPage() {
             )}
 
             {/* Submit Button */}
-            <div className="pt-12 flex flex-col items-center gap-4">
+            <div className="pt-8 flex flex-col items-center gap-3">
               <button
-                className="w-full bg-primary hover:bg-primary/90 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all shadow-2xl shadow-primary/30 disabled:opacity-50"
+                className="w-full max-w-md bg-primary hover:bg-primary/90 text-white px-8 py-3.5 rounded-xl font-bold text-base transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
                 type="submit"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? 'Submitting...' : 'Submit Listing for Verification'}
               </button>
-              <p className="text-xs text-slate-500 text-center">Ready to go? Submit your listing to appear in the directory.</p>
+              <p className="text-xs text-theme-text-muted text-center">Ready to go? Submit your listing to appear in the directory.</p>
             </div>
           </form>
         </div>
@@ -619,50 +611,50 @@ export default function SubmitPage() {
         <div className="lg:w-80">
           <div className="sticky top-32 space-y-6">
             {/* Benefits Card */}
-            <div className="bg-gradient-to-br from-primary to-blue-600 p-6 rounded-2xl text-white shadow-xl">
-              <h3 className="text-xl font-bold mb-4">Submission Benefits</h3>
+            <div className="bg-dark-surface border border-dark-border p-6 rounded-2xl shadow-xl">
+              <h3 className="text-lg font-bold mb-4">Submission Benefits</h3>
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <span className="material-symbols-outlined text-accent">trending_up</span>
+                  <span className="material-symbols-outlined text-primary">trending_up</span>
                   <div>
                     <div className="font-bold text-sm">Global Traffic</div>
-                    <p className="text-xs text-white/70">Exposure to active traders and builders worldwide.</p>
+                    <p className="text-xs text-theme-text-secondary">Exposure to active traders and builders worldwide.</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <span className="material-symbols-outlined text-accent">smart_toy</span>
+                  <span className="material-symbols-outlined text-primary">smart_toy</span>
                   <div>
                     <div className="font-bold text-sm">Agent-First</div>
-                    <p className="text-xs text-white/70">Discoverable by AI agents via API and manifests.</p>
+                    <p className="text-xs text-theme-text-secondary">Discoverable by AI agents via API and manifests.</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Onboarding Checklist Card */}
-            <div className="bg-dark-surface border border-white/10 p-6 rounded-2xl">
+            <div className="bg-dark-surface border border-dark-border p-6 rounded-2xl shadow-lg">
               <h4 className="font-bold text-sm mb-4">Onboarding Checklist</h4>
-              <ul className="space-y-3 text-xs text-slate-400">
+              <ul className="space-y-3 text-xs text-theme-text-secondary">
                 <li className="flex items-center gap-2">
-                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${contactEmail ? 'text-emerald-500' : 'text-slate-600'}`}>
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${contactEmail ? 'text-emerald-500' : 'text-theme-text-muted'}`}>
                     {contactEmail ? 'check_circle' : 'circle'}
                   </span>
                   Contact Email (Required)
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${name && shortDesc && description && websiteUrl ? 'text-emerald-500' : 'text-slate-600'}`}>
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${name && shortDesc && description && websiteUrl ? 'text-emerald-500' : 'text-theme-text-muted'}`}>
                     {name && shortDesc && description && websiteUrl ? 'check_circle' : 'circle'}
                   </span>
                   Listing Details (Required)
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedCategories.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedCategories.length > 0 ? 'text-emerald-500' : 'text-theme-text-muted'}`}>
                     {selectedCategories.length > 0 ? 'check_circle' : 'circle'}
                   </span>
                   Category Selection (Required)
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedChains.length > 0 ? 'text-emerald-500' : 'text-slate-600'}`}>
+                  <span className={`material-symbols-outlined text-base leading-none shrink-0 ${selectedChains.length > 0 ? 'text-emerald-500' : 'text-theme-text-muted'}`}>
                     {selectedChains.length > 0 ? 'check_circle' : 'circle'}
                   </span>
                   Chain Integration (Optional)
@@ -681,43 +673,43 @@ export default function SubmitPage() {
               <span className="material-symbols-outlined text-3xl text-amber-500" style={filledStyle}>warning</span>
               <h3 className="text-xl font-bold">Review Before Submitting</h3>
             </div>
-            <p className="text-slate-400 text-sm mb-6">
+            <p className="text-theme-text-secondary text-sm mb-6">
               Submissions cannot be edited after submission. Please review your details carefully.
             </p>
             <div className="space-y-3 text-sm">
               <div className="flex gap-2">
-                <span className="text-slate-500 w-24 shrink-0">Name</span>
+                <span className="text-theme-text-muted w-24 shrink-0">Name</span>
                 <span className="font-medium">{pendingPayload.name}</span>
               </div>
               <div className="flex gap-2">
-                <span className="text-slate-500 w-24 shrink-0">Website</span>
+                <span className="text-theme-text-muted w-24 shrink-0">Website</span>
                 <span className="text-primary break-all">{pendingPayload.website_url}</span>
               </div>
               <div className="flex gap-2">
-                <span className="text-slate-500 w-24 shrink-0">Summary</span>
-                <span className="text-slate-300">{pendingPayload.short_description}</span>
+                <span className="text-theme-text-muted w-24 shrink-0">Summary</span>
+                <span className="text-theme-text-secondary">{pendingPayload.short_description}</span>
               </div>
               <div className="flex gap-2">
-                <span className="text-slate-500 w-24 shrink-0">Categories</span>
-                <span className="text-slate-300">
+                <span className="text-theme-text-muted w-24 shrink-0">Categories</span>
+                <span className="text-theme-text-secondary">
                   {pendingPayload.categories.map(id => categories?.find(c => c.id === id)?.name || id).join(', ')}
                 </span>
               </div>
               {pendingPayload.tags.length > 0 && (
                 <div className="flex gap-2">
-                  <span className="text-slate-500 w-24 shrink-0">Tags</span>
-                  <span className="text-slate-300">{pendingPayload.tags.join(', ')}</span>
+                  <span className="text-theme-text-muted w-24 shrink-0">Tags</span>
+                  <span className="text-theme-text-secondary">{pendingPayload.tags.join(', ')}</span>
                 </div>
               )}
               {pendingPayload.docs_url && (
                 <div className="flex gap-2">
-                  <span className="text-slate-500 w-24 shrink-0">Docs URL</span>
+                  <span className="text-theme-text-muted w-24 shrink-0">Docs URL</span>
                   <span className="text-primary break-all">{pendingPayload.docs_url}</span>
                 </div>
               )}
               {pendingPayload.github_url && (
                 <div className="flex gap-2">
-                  <span className="text-slate-500 w-24 shrink-0">GitHub</span>
+                  <span className="text-theme-text-muted w-24 shrink-0">GitHub</span>
                   <span className="text-primary break-all">{pendingPayload.github_url}</span>
                 </div>
               )}
@@ -725,7 +717,7 @@ export default function SubmitPage() {
             <div className="flex gap-3 mt-8">
               <button
                 onClick={() => { setShowConfirmation(false); setPendingPayload(null); }}
-                className="flex-1 px-4 py-3 rounded-lg border border-white/10 text-slate-300 hover:bg-white/5 transition-colors font-medium"
+                className="flex-1 px-4 py-3 rounded-lg border border-dark-border text-theme-text-secondary hover:bg-dark-surface2 transition-colors font-medium"
               >
                 Go Back & Edit
               </button>

@@ -21,28 +21,28 @@ function Endpoint({ method, path, description, params, body, response, rateLimit
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-800 flex flex-wrap items-center gap-3">
+    <div className="bg-dark-surface border border-dark-border rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-dark-border flex flex-wrap items-center gap-3">
         <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase tracking-wider ${methodColors[method]}`}>
           {method}
         </span>
-        <code className="text-sm text-white font-mono">{path}</code>
+        <code className="text-sm text-theme-text font-mono">{path}</code>
         {rateLimit && (
-          <span className="ml-auto text-xs text-slate-500">{rateLimit}</span>
+          <span className="ml-auto text-xs text-theme-text-muted">{rateLimit}</span>
         )}
       </div>
       <div className="px-6 py-4 space-y-4">
-        <p className="text-sm text-slate-400">{description}</p>
+        <p className="text-sm text-theme-text-secondary">{description}</p>
 
         {params && params.length > 0 && (
           <div>
-            <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Query Parameters</h5>
+            <h5 className="text-xs font-bold text-theme-text-muted uppercase tracking-wider mb-2">Query Parameters</h5>
             <div className="space-y-1">
               {params.map(p => (
                 <div key={p.name} className="flex gap-3 text-sm">
                   <code className="text-primary font-mono text-xs shrink-0">{p.name}</code>
-                  <span className="text-slate-600 text-xs shrink-0">({p.type})</span>
-                  <span className="text-slate-400 text-xs">{p.desc}</span>
+                  <span className="text-theme-text-muted text-xs shrink-0">({p.type})</span>
+                  <span className="text-theme-text-secondary text-xs">{p.desc}</span>
                 </div>
               ))}
             </div>
@@ -51,14 +51,14 @@ function Endpoint({ method, path, description, params, body, response, rateLimit
 
         {body && (
           <div>
-            <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Request Body</h5>
-            <pre className="bg-slate-950 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">{body}</pre>
+            <h5 className="text-xs font-bold text-theme-text-muted uppercase tracking-wider mb-2">Request Body</h5>
+            <pre className="bg-dark-surface2 rounded-lg p-4 text-xs text-theme-text-secondary font-mono overflow-x-auto">{body}</pre>
           </div>
         )}
 
         <div>
-          <h5 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Response</h5>
-          <pre className="bg-slate-950 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">{response}</pre>
+          <h5 className="text-xs font-bold text-theme-text-muted uppercase tracking-wider mb-2">Response</h5>
+          <pre className="bg-dark-surface2 rounded-lg p-4 text-xs text-theme-text-secondary font-mono overflow-x-auto">{response}</pre>
         </div>
       </div>
     </div>
@@ -70,21 +70,21 @@ export default function ApiDocsPage() {
     <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-20 py-12">
       <Helmet>
         <title>API Documentation</title>
-        <meta name="description" content="REST API documentation for AgentRadar — discover, filter, submit, and check listings programmatically." />
+        <meta name="description" content="REST API documentation for AgentRadar. Discover, filter, submit, and check listings programmatically." />
         <meta property="og:title" content={`API Documentation | ${APP_NAME}`} />
-        <meta property="og:description" content="REST API documentation for AgentRadar — discover, filter, submit, and check listings programmatically." />
+        <meta property="og:description" content="REST API documentation for AgentRadar. Discover, filter, submit, and check listings programmatically." />
         <meta property="og:type" content="website" />
       </Helmet>
       <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
-        <Link className="text-slate-500 hover:text-primary transition-colors" to="/">Home</Link>
-        <span className="text-slate-400 material-symbols-outlined text-xs">chevron_right</span>
+        <Link className="text-theme-text-muted hover:text-primary transition-colors" to="/">Home</Link>
+        <span className="text-theme-text-muted material-symbols-outlined text-xs">chevron_right</span>
         <span className="text-primary">API Documentation</span>
       </nav>
 
       <div className="mb-12">
         <h1 className="text-4xl font-bold tracking-tight mb-4">API Documentation</h1>
-        <p className="text-slate-300 text-lg max-w-3xl">
-          {APP_NAME} provides a RESTful API for discovering and submitting listings — agents, tools, protocols, and infrastructure.
+        <p className="text-theme-text-secondary text-lg max-w-3xl">
+          {APP_NAME} provides a RESTful API for discovering and submitting listings: agents, tools, protocols, and infrastructure.
           All responses are JSON. The base URL is <code className="text-primary font-mono text-sm">{baseUrl}/api</code>.
         </p>
       </div>
@@ -92,34 +92,34 @@ export default function ApiDocsPage() {
       {/* Rate Limits */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Rate Limits</h2>
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
+        <div className="bg-dark-surface border border-dark-border rounded-xl p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <p className="text-sm text-slate-500 mb-1">Read endpoints (GET)</p>
+              <p className="text-sm text-theme-text-muted mb-1">Read endpoints (GET)</p>
               <p className="text-lg font-bold">60 requests / minute</p>
             </div>
             <div>
-              <p className="text-sm text-slate-500 mb-1">Submit endpoint (POST)</p>
+              <p className="text-sm text-theme-text-muted mb-1">Submit endpoint (POST)</p>
               <p className="text-lg font-bold">30 requests / hour</p>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-4">Rate limits are per IP address. Exceeding the limit returns <code className="text-slate-400">429 Too Many Requests</code>.</p>
+          <p className="text-xs text-theme-text-muted mt-4">Rate limits are per IP address. Exceeding the limit returns <code className="text-theme-text-secondary">429 Too Many Requests</code>.</p>
         </div>
       </section>
 
       {/* CORS */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">CORS</h2>
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          <p className="text-sm text-slate-400 mb-3">
+        <div className="bg-dark-surface border border-dark-border rounded-xl p-6">
+          <p className="text-sm text-theme-text-secondary mb-3">
             All API endpoints support Cross-Origin Resource Sharing (CORS) with permissive defaults for agent-first access.
           </p>
           <div className="space-y-2 text-sm">
-            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Origin</code><span className="text-slate-400">*</span></div>
-            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Methods</code><span className="text-slate-400">GET, POST, PATCH, DELETE, OPTIONS</span></div>
-            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Headers</code><span className="text-slate-400">Content-Type, Authorization</span></div>
+            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Origin</code><span className="text-theme-text-secondary">*</span></div>
+            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Methods</code><span className="text-theme-text-secondary">GET, POST, PATCH, DELETE, OPTIONS</span></div>
+            <div className="flex gap-4"><code className="text-primary font-mono text-xs shrink-0">Access-Control-Allow-Headers</code><span className="text-theme-text-secondary">Content-Type, Authorization</span></div>
           </div>
-          <p className="text-xs text-slate-500 mt-4">Browser-based agents and cross-origin API consumers can call all endpoints without proxy configuration.</p>
+          <p className="text-xs text-theme-text-muted mt-4">Browser-based agents and cross-origin API consumers can call all endpoints without proxy configuration.</p>
         </div>
       </section>
 
@@ -140,7 +140,7 @@ export default function ApiDocsPage() {
               { name: 'sort', type: 'string', desc: '"newest" (default), "views", or "alpha"' },
               { name: 'page', type: 'number', desc: 'Page number (default: 1)' },
               { name: 'per_page', type: 'number', desc: 'Items per page (default: 20, max: 100)' },
-              { name: 'format', type: 'string', desc: '"agent" — minimal response for AI agents (drops logo, dates, view counts)' },
+              { name: 'format', type: 'string', desc: '"agent" - minimal response for AI agents (drops logo, dates, view counts)' },
             ]}
             response={`{
   "data": [
@@ -201,7 +201,7 @@ export default function ApiDocsPage() {
           <Endpoint
             method="POST"
             path="/api/listings"
-            description="Submit a new listing for review. The listing will be set to 'pending' status until an admin approves it. Unknown fields are rejected with a 422 error — use exactly the field names shown below. For agent submissions, contact_email is optional — a submitter_token UUID is returned as your identifier. Store it; it's only returned once."
+            description="Submit a new listing for review. The listing will be set to 'pending' status until an admin approves it. Unknown fields are rejected with a 422 error, use exactly the field names shown below. For agent submissions, contact_email is optional. A submitter_token UUID is returned as your identifier. Store it; it's only returned once."
             rateLimit="30/hour"
             body={`{
   "name": "My Agent Tool",          // required, 1-100 chars
@@ -223,7 +223,7 @@ export default function ApiDocsPage() {
   "slug": "my-agent-tool",
   "status": "pending",
   "submitted_at": "2025-01-01T00:00:00Z",
-  "submitter_token": "uuid  // store this — acts as your API key"
+  "submitter_token": "uuid  // store this, acts as your API key"
 }`}
           />
 
@@ -270,7 +270,7 @@ export default function ApiDocsPage() {
       {/* Submission Status Endpoints */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">Submission Status</h2>
-        <p className="text-slate-400 text-sm mb-6">
+        <p className="text-theme-text-secondary text-sm mb-6">
           After submitting a listing, use these endpoints to check its review status. No authentication required.
         </p>
         <div className="space-y-6">
@@ -280,7 +280,7 @@ export default function ApiDocsPage() {
             description="Search submissions by partial name or slug match (ILIKE). Returns up to 10 results, ordered by most recent. Minimum 2 characters required."
             rateLimit="60/min"
             params={[
-              { name: 'q', type: 'string', desc: 'Search query — matches against listing name or slug (min 2 chars)' },
+              { name: 'q', type: 'string', desc: 'Search query, matches against listing name or slug (min 2 chars)' },
             ]}
             response={`[
   {
@@ -317,19 +317,19 @@ export default function ApiDocsPage() {
       {/* Error Format */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Error Responses</h2>
-        <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-          <p className="text-sm text-slate-400 mb-4">All errors return a consistent JSON format. POST/PATCH requests must include <code className="text-primary font-mono text-xs">Content-Type: application/json</code>.</p>
-          <pre className="bg-slate-950 rounded-lg p-4 text-xs text-slate-300 font-mono overflow-x-auto">{`{
+        <div className="bg-dark-surface border border-dark-border rounded-xl p-6">
+          <p className="text-sm text-theme-text-secondary mb-4">All errors return a consistent JSON format. POST/PATCH requests must include <code className="text-primary font-mono text-xs">Content-Type: application/json</code>.</p>
+          <pre className="bg-dark-surface2 rounded-lg p-4 text-xs text-theme-text-secondary font-mono overflow-x-auto">{`{
   "error": "Not found",
   "code": "NOT_FOUND"
 }`}</pre>
           <div className="mt-4 space-y-2 text-sm">
-            <div className="flex gap-4"><code className="text-amber-400 w-8">400</code><span className="text-slate-400">Malformed JSON body (<code className="text-slate-500">BAD_REQUEST</code>)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">401</code><span className="text-slate-400">Unauthorized — missing or invalid admin token (<code className="text-slate-500">UNAUTHORIZED</code>)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">404</code><span className="text-slate-400">Resource not found (<code className="text-slate-500">NOT_FOUND</code>)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">422</code><span className="text-slate-400">Validation error or missing Content-Type header (<code className="text-slate-500">VALIDATION</code> / <code className="text-slate-500">UNPROCESSABLE</code>)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">429</code><span className="text-slate-400">Rate limit exceeded — includes <code className="text-slate-500">Retry-After</code> header (<code className="text-slate-500">RATE_LIMIT</code>)</span></div>
-            <div className="flex gap-4"><code className="text-amber-400 w-8">500</code><span className="text-slate-400">Internal server error (<code className="text-slate-500">DB_ERROR</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">400</code><span className="text-theme-text-secondary">Malformed JSON body (<code className="text-theme-text-muted">BAD_REQUEST</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">401</code><span className="text-theme-text-secondary">Unauthorized, missing or invalid admin token (<code className="text-theme-text-muted">UNAUTHORIZED</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">404</code><span className="text-theme-text-secondary">Resource not found (<code className="text-theme-text-muted">NOT_FOUND</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">422</code><span className="text-theme-text-secondary">Validation error or missing Content-Type header (<code className="text-theme-text-muted">VALIDATION</code> / <code className="text-theme-text-muted">UNPROCESSABLE</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">429</code><span className="text-theme-text-secondary">Rate limit exceeded, includes <code className="text-theme-text-muted">Retry-After</code> header (<code className="text-theme-text-muted">RATE_LIMIT</code>)</span></div>
+            <div className="flex gap-4"><code className="text-amber-400 w-8">500</code><span className="text-theme-text-secondary">Internal server error (<code className="text-theme-text-muted">DB_ERROR</code>)</span></div>
           </div>
         </div>
       </section>
@@ -337,21 +337,21 @@ export default function ApiDocsPage() {
       {/* Agent Discovery */}
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-4">Agent Discovery</h2>
-        <p className="text-slate-400 text-sm mb-6">
-          Agents can discover the full API surface automatically by probing these standard endpoints — no documentation handoff needed.
+        <p className="text-theme-text-secondary text-sm mb-6">
+          Agents can discover the full API surface automatically by probing these standard endpoints. No documentation handoff needed.
         </p>
         <div className="space-y-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="bg-dark-surface border border-dark-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
             <code className="text-primary font-mono text-sm shrink-0">/.well-known/agent.json</code>
-            <span className="text-slate-400 text-sm">Agent capabilities manifest — lists every operation, parameters, rate limits, and auth requirements.</span>
+            <span className="text-theme-text-secondary text-sm">Agent capabilities manifest. Lists every operation, parameters, rate limits, and auth requirements.</span>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="bg-dark-surface border border-dark-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
             <code className="text-primary font-mono text-sm shrink-0">/.well-known/ai-plugin.json</code>
-            <span className="text-slate-400 text-sm">AI plugin manifest (ChatGPT plugin format) for agents that probe this standard path.</span>
+            <span className="text-theme-text-secondary text-sm">AI plugin manifest (ChatGPT plugin format) for agents that probe this standard path.</span>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+          <div className="bg-dark-surface border border-dark-border rounded-xl p-5 flex flex-col sm:flex-row sm:items-center gap-3">
             <code className="text-primary font-mono text-sm shrink-0">/api/openapi.json</code>
-            <span className="text-slate-400 text-sm">Full OpenAPI 3.0 spec — any agent or tool that speaks OpenAPI can auto-generate a client from this.</span>
+            <span className="text-theme-text-secondary text-sm">Full OpenAPI 3.0 spec. Any agent or tool that speaks OpenAPI can auto-generate a client from this.</span>
           </div>
         </div>
       </section>
@@ -363,7 +363,7 @@ export default function ApiDocsPage() {
             <span className="material-symbols-outlined text-primary">smart_toy</span>
             Agent-First Design
           </h3>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-theme-text-secondary">
             This API is designed for autonomous AI agent consumption. All endpoints return structured JSON,
             use predictable pagination, and require no authentication for read operations. Agents can discover,
             filter, and retrieve listing data programmatically without browser interaction.

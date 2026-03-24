@@ -35,7 +35,7 @@ export default function ListingLogo({ name, logoUrl, size = 'w-12 h-12', textSiz
   // Real logo: clean white box with subtle border — works for any logo color
   if (logoUrl && !imgError) {
     return (
-      <div className={`${size} ${rounded} bg-slate-800 ring-1 ring-white/10 flex items-center justify-center overflow-hidden flex-shrink-0`}>
+      <div className={`${size} ${rounded} bg-dark-surface ring-1 ring-dark-border flex items-center justify-center overflow-hidden flex-shrink-0`}>
         <img
           className="w-full h-full object-contain"
           src={logoUrl}

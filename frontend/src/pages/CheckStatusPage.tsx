@@ -37,20 +37,20 @@ function ResultCard({ result }: { result: SubmissionStatusResponse }) {
     <div className="bg-dark-surface border border-primary/10 rounded-xl p-6 hover:border-primary/30 transition-colors">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
-          <h3 className="text-lg font-bold text-white">{result.name}</h3>
-          <p className="text-sm text-slate-500 font-mono">{result.slug}</p>
+          <h3 className="text-lg font-bold">{result.name}</h3>
+          <p className="text-sm text-theme-text-muted font-mono">{result.slug}</p>
         </div>
         <StatusBadge status={result.status} />
       </div>
 
       <div className="space-y-2 text-sm">
         <div>
-          <span className="text-slate-500">Submitted:</span>{' '}
-          <span className="text-slate-300">{formatDate(result.submitted_at)}</span>
+          <span className="text-theme-text-muted">Submitted:</span>{' '}
+          <span className="text-theme-text-secondary">{formatDate(result.submitted_at)}</span>
         </div>
         {result.approved_at && (
           <div>
-            <span className="text-slate-500">Approved:</span>{' '}
+            <span className="text-theme-text-muted">Approved:</span>{' '}
             <span className="text-emerald-400">{formatDate(result.approved_at)}</span>
           </div>
         )}
@@ -107,14 +107,14 @@ export default function CheckStatusPage() {
       </Helmet>
 
       <nav className="flex items-center gap-2 mb-8 text-sm font-medium">
-        <Link className="text-slate-500 hover:text-primary transition-colors" to="/">Home</Link>
-        <span className="text-slate-400 material-symbols-outlined text-xs">chevron_right</span>
+        <Link className="text-theme-text-muted hover:text-primary transition-colors" to="/">Home</Link>
+        <span className="text-theme-text-secondary material-symbols-outlined text-xs">chevron_right</span>
         <span className="text-primary">Check Status</span>
       </nav>
 
       <div className="mb-10">
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">Check Submission Status</h1>
-        <p className="text-slate-300 max-w-xl">
+        <p className="text-theme-text-secondary max-w-xl">
           Enter your listing name or slug to check its review status. Results appear as you type.
         </p>
       </div>
@@ -122,13 +122,13 @@ export default function CheckStatusPage() {
       {/* Search input */}
       <div className="relative mb-8">
         <div className="flex items-center bg-dark-surface border border-primary/20 rounded-xl px-4 py-3 gap-3 focus-within:border-primary/50 transition-colors">
-          <span className="material-symbols-outlined text-slate-400">search</span>
+          <span className="material-symbols-outlined text-theme-text-secondary">search</span>
           <input
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Enter listing name or slug..."
-            className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-slate-500"
+            className="flex-1 bg-transparent border-none outline-none placeholder:text-theme-text-muted"
             autoFocus
           />
           {isLoading && showResults && (
@@ -136,23 +136,23 @@ export default function CheckStatusPage() {
           )}
         </div>
         {query.length > 0 && query.trim().length < 2 && (
-          <p className="text-xs text-slate-500 mt-2">Type at least 2 characters to search</p>
+          <p className="text-xs text-theme-text-muted mt-2">Type at least 2 characters to search</p>
         )}
       </div>
 
       {/* Results */}
       {!showResults && (
         <div className="text-center py-16">
-          <span className="material-symbols-outlined text-5xl text-slate-600 mb-4">manage_search</span>
-          <p className="text-slate-500">Start typing to search for your submission</p>
+          <span className="material-symbols-outlined text-5xl text-theme-text-muted mb-4">manage_search</span>
+          <p className="text-theme-text-muted">Start typing to search for your submission</p>
         </div>
       )}
 
       {showResults && !isLoading && results && results.length === 0 && (
         <div className="text-center py-16">
-          <span className="material-symbols-outlined text-5xl text-slate-600 mb-4">search_off</span>
-          <p className="text-slate-400 font-medium mb-2">No submissions found</p>
-          <p className="text-slate-500 text-sm">No listings match "{debouncedQuery}". Double-check your slug or try a different search.</p>
+          <span className="material-symbols-outlined text-5xl text-theme-text-muted mb-4">search_off</span>
+          <p className="text-theme-text-secondary font-medium mb-2">No submissions found</p>
+          <p className="text-theme-text-muted text-sm">No listings match "{debouncedQuery}". Double-check your slug or try a different search.</p>
         </div>
       )}
 
@@ -160,13 +160,13 @@ export default function CheckStatusPage() {
         <div className="text-center py-16">
           <span className="material-symbols-outlined text-5xl text-red-400 mb-4">error</span>
           <p className="text-red-400 font-medium">Something went wrong</p>
-          <p className="text-slate-500 text-sm mt-1">Please try again in a moment.</p>
+          <p className="text-theme-text-muted text-sm mt-1">Please try again in a moment.</p>
         </div>
       )}
 
       {showResults && results && results.length > 0 && (
         <div className="space-y-4">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-theme-text-muted">
             {results.length} result{results.length !== 1 ? 's' : ''} found
           </p>
           {results.map(result => (
@@ -179,13 +179,13 @@ export default function CheckStatusPage() {
       <div className="mt-12 bg-primary/5 border border-primary/20 rounded-xl p-6">
         <div className="flex items-start gap-4">
           <span className="material-symbols-outlined text-primary text-2xl flex-shrink-0 mt-0.5">info</span>
-          <div className="text-sm text-slate-400 space-y-2">
+          <div className="text-sm text-theme-text-secondary space-y-2">
             <p>
-              <strong className="text-slate-300">How it works:</strong> After submitting a listing, our team reviews it.
+              <strong className="text-theme-text-secondary">How it works:</strong> After submitting a listing, our team reviews it.
               Approved listings appear in the directory. Rejected listings include a note explaining why.
             </p>
             <p>
-              <strong className="text-slate-300">For agents:</strong> Use the API endpoint{' '}
+              <strong className="text-theme-text-secondary">For agents:</strong> Use the API endpoint{' '}
               <code className="text-primary font-mono text-xs">GET /api/submissions/search?q=your-slug</code>{' '}
               or{' '}
               <code className="text-primary font-mono text-xs">GET /api/submissions/&lt;id-or-slug&gt;/status</code>{' '}
