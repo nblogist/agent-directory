@@ -2,6 +2,23 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAdminStore } from '../../lib/adminStore';
 import { APP_NAME } from '../../lib/constants';
+import { useTheme, type Theme } from '../../lib/theme';
+import RadarLogo from '../RadarLogo';
+
+function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const icons: Record<Theme, string> = { light: 'light_mode', dark: 'dark_mode', system: 'monitor' };
+  const order: Theme[] = ['dark', 'light', 'system'];
+  return (
+    <button
+      onClick={() => { const i = order.indexOf(theme); setTheme(order[(i + 1) % order.length]); }}
+      className="p-2 text-theme-text-secondary hover:text-primary transition-colors"
+      title={`Theme: ${theme}`}
+    >
+      <span className="material-symbols-outlined text-lg">{icons[theme]}</span>
+    </button>
+  );
+}
 
 export function AdminLayout() {
   const clearToken = useAdminStore((s) => s.clearToken);
@@ -19,9 +36,7 @@ export function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-64 flex-shrink-0 border-r border-dark-border bg-dark-bg flex flex-col">
         <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-            <span className="material-symbols-outlined">deployed_code</span>
-          </div>
+          <RadarLogo size="w-10 h-10" />
           <div>
             <h1 className="font-bold text-lg leading-tight">{APP_NAME}</h1>
             <p className="text-xs text-theme-text-secondary font-medium uppercase tracking-wider">Admin Console</p>
@@ -87,6 +102,7 @@ export function AdminLayout() {
             </form>
           </div>
           <div className="flex items-center gap-3 pl-4 border-l border-dark-border">
+            <ThemeToggle />
             <div className="text-right hidden sm:block">
               <p className="text-sm font-bold leading-none">Admin</p>
             </div>

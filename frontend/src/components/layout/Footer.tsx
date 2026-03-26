@@ -1,15 +1,18 @@
 import { Link } from 'react-router-dom';
 import { APP_NAME } from '../../lib/constants';
+import RadarLogo from '../RadarLogo';
 
 export default function Footer() {
   return (
     <footer className="bg-dark-surface border-t border-dark-border py-12 px-4 sm:px-6 lg:px-20">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
         <div className="max-w-xs">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="material-symbols-outlined text-primary text-2xl">deployed_code</span>
-            <Link to="/" className="text-lg font-bold">{APP_NAME}</Link>
-            <span className="text-xs text-theme-text-muted block mt-1">Autonomous Agent-First Directory</span>
+          <div className="mb-6">
+            <div className="flex items-center gap-2">
+              <RadarLogo size="w-7 h-7" />
+              <Link to="/" className="text-lg font-bold">{APP_NAME}</Link>
+            </div>
+            <p className="text-xs text-theme-text-muted mt-1">Autonomous Agent-First Directory</p>
           </div>
           <p className="text-theme-text-secondary text-sm leading-relaxed">
             The open directory for AI agents, tools, and infrastructure. Built for agents and the humans behind them.

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdminStore } from '../../lib/adminStore';
 import { api, ApiError } from '../../lib/api';
 import { APP_NAME } from '../../lib/constants';
+import RadarLogo from '../../components/RadarLogo';
 
 export default function AdminLogin() {
   const [token, setToken] = useState('');
@@ -36,7 +37,7 @@ export default function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-dark-bg px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <span className="material-symbols-outlined text-primary text-4xl">deployed_code</span>
+          <RadarLogo size="w-14 h-14 mx-auto" />
           <h1 className="text-2xl font-bold mt-3">{APP_NAME} Admin</h1>
           <p className="text-theme-text-secondary text-sm mt-1">Enter your admin token to continue</p>
         </div>

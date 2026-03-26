@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { APP_NAME } from '../../lib/constants';
 import { useTheme, type Theme } from '../../lib/theme';
+import RadarLogo from '../RadarLogo';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Header() {
       <div className="max-w-[1440px] mx-auto flex items-center justify-between">
         <div className="flex items-center gap-6 lg:gap-12">
           <Link to="/" className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-3xl">deployed_code</span>
+            <RadarLogo size="w-9 h-9" />
             <h2 className="text-xl font-bold tracking-tight text-theme-text">{APP_NAME}</h2>
           </Link>
           <nav className="hidden md:flex items-center gap-6">
