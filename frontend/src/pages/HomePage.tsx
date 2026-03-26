@@ -43,12 +43,8 @@ export default function HomePage() {
       <section className="relative px-4 sm:px-6 py-16 lg:py-24 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(55,19,236,0.1),transparent)] pointer-events-none" />
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary text-white text-xs font-bold tracking-widest uppercase mb-6">
-            Autonomous Agent-First Directory
-          </span>
-
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold tracking-tight mb-8">
-            The Directory for <span className="text-primary italic neon-glow">AI Agents & Tools</span>
+            The Directory for<br /><span className="text-primary neon-glow">AI Agents & Tools</span>
           </h1>
 
           <p className="text-base sm:text-lg text-theme-text-secondary mb-10 max-w-2xl mx-auto">
@@ -72,29 +68,45 @@ export default function HomePage() {
             </button>
           </form>
 
-          {/* Hero CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+          {/* Human / Agent split */}
+          <div className="max-w-2xl mx-auto mt-8 space-y-3">
+            <Link
+              to="/browse"
+              className="flex items-center gap-4 px-6 py-5 rounded-xl bg-dark-surface border border-dark-border transition-all duration-300 ease-out hover:scale-[1.02] hover:border-primary/40 hover:shadow-lg active:scale-[0.98] group"
+            >
+              <span className="material-symbols-outlined text-theme-text-secondary text-3xl shrink-0">person</span>
+              <div className="flex-1 text-left">
+                <span className="font-bold text-lg text-theme-text">I'm a Human</span>
+                <p className="text-theme-text-muted text-sm mt-0.5">Browse the directory. Find tools, compare, and integrate.</p>
+              </div>
+              <span className="material-symbols-outlined text-theme-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all">arrow_forward</span>
+            </Link>
+
+            <a
+              href="/llms.txt"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 px-6 py-5 rounded-xl bg-primary text-white transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(55,19,236,0.4)] active:scale-[0.98] group"
+            >
+              <span className="material-symbols-outlined text-white text-3xl shrink-0">smart_toy</span>
+              <div className="flex-1 text-left">
+                <span className="font-bold text-lg">I'm an Agent</span>
+                <p className="text-white/70 text-sm mt-0.5">Discover, filter, and submit listings via REST API. No browser required.</p>
+              </div>
+              <span className="material-symbols-outlined text-white/70 group-hover:translate-x-1 group-hover:text-white transition-all">arrow_forward</span>
+            </a>
+          </div>
+
+          {/* Submit CTA */}
+          <div className="flex items-center justify-center mt-6">
             <Link
               to="/submit"
-              className="inline-flex items-center gap-2 bg-dark-surface border border-dark-border text-theme-text px-6 py-2.5 rounded-lg font-bold text-sm transition-all duration-300 ease-out hover:scale-[1.05] hover:border-primary/40 hover:bg-primary/10 hover:text-primary active:scale-95"
+              className="inline-flex items-center gap-2 text-theme-text-secondary text-sm font-medium hover:text-primary transition-colors"
             >
               <span className="material-symbols-outlined text-lg">add_circle</span>
               Submit a Listing
             </Link>
           </div>
-
-          {/* Agent CTA */}
-          <Link
-            to="/api-docs"
-            className="mt-8 max-w-2xl mx-auto flex items-center gap-4 px-6 py-5 rounded-xl bg-primary text-white transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(55,19,236,0.4)] active:scale-[0.98] group"
-          >
-            <span className="material-symbols-outlined text-white text-3xl shrink-0">smart_toy</span>
-            <div className="flex-1 text-left">
-              <span className="font-bold text-lg">I'm an Agent</span>
-              <p className="text-white/70 text-sm mt-0.5">Discover, filter, and submit listings via REST API. No browser required.</p>
-            </div>
-            <span className="material-symbols-outlined text-white/70 group-hover:translate-x-1 group-hover:text-white transition-all">arrow_forward</span>
-          </Link>
 
           {/* Trending pills */}
           <div className="flex flex-wrap justify-center gap-3 mt-10">

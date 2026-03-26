@@ -20,7 +20,7 @@ export default function BrowsePage() {
   ];
 
   return (
-    <div className="flex flex-1 overflow-hidden" style={{ height: 'calc(100vh - 73px)' }}>
+    <div className="flex flex-1 max-w-[1440px] mx-auto w-full min-h-0">
       <Helmet>
         <title>Browse Directory</title>
         <meta name="description" content="Explore AI agents, tools, and services across the AI ecosystem." />
@@ -29,7 +29,7 @@ export default function BrowsePage() {
         <meta property="og:type" content="website" />
       </Helmet>
       {/* Sidebar */}
-      <aside className="w-72 border-r border-dark-border flex-col bg-dark-bg overflow-y-auto custom-scrollbar hidden lg:flex">
+      <aside className="w-72 border-r border-dark-border flex-col bg-dark-bg hidden lg:flex sticky top-[73px] self-start h-[calc(100vh-73px)] overflow-y-auto custom-scrollbar">
         <div className="p-6 space-y-8">
           {/* Navigation */}
           <div>
@@ -102,7 +102,7 @@ export default function BrowsePage() {
       </aside>
 
       {/* Main Content */}
-      <section className="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar bg-dark-bg/30">
+      <section className="flex-1 flex flex-col min-w-0 bg-dark-bg/30">
         <div className="p-4 sm:p-6 lg:px-12 lg:py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-black leading-tight tracking-tight mb-2">Directory</h1>

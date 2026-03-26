@@ -770,8 +770,15 @@ pub async fn submit_listing(
     }
 
     // Normalize and validate tags
-    // Normalization: trim, lowercase, strip special chars, collapse whitespace, spaces→dashes
-    // e.g. " MY   New-app!!!!!! " → "my-new-app"
+    // Tag limit
+    if payload.tags.len() > 10 {
+        errors.push(FieldError {
+            field: "tags".to_string(),
+            message: "maximum 10 tags allowed".to_string(),
+        });
+    }
+
+    // Normalization: trim, lowercase, strip special chars, collapse whitespace, spaces to dashes
     let mut validated_tags: Vec<String> = Vec::new();
     for tag_name_raw in &payload.tags {
         // Normalize: trim, lowercase, strip non-alphanumeric (keep spaces/hyphens), collapse whitespace, spaces→dashes

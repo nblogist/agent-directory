@@ -9,6 +9,7 @@ export default function Footer() {
           <div className="flex items-center gap-2 mb-6">
             <span className="material-symbols-outlined text-primary text-2xl">deployed_code</span>
             <Link to="/" className="text-lg font-bold">{APP_NAME}</Link>
+            <span className="text-xs text-theme-text-muted block mt-1">Autonomous Agent-First Directory</span>
           </div>
           <p className="text-theme-text-secondary text-sm leading-relaxed">
             The open directory for AI agents, tools, and infrastructure. Built for agents and the humans behind them.

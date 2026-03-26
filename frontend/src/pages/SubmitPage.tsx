@@ -59,6 +59,7 @@ export default function SubmitPage() {
   });
 
   function addTag(raw: string) {
+    if (tags.length >= 10) return;
     const tag = raw.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
     if (tag && !tags.includes(tag)) setTags(prev => [...prev, tag]);
     setTagInput('');
@@ -482,7 +483,7 @@ export default function SubmitPage() {
                 {/* Tags input */}
                 <div className="col-span-2">
                   <label className="block text-sm font-bold mb-2 text-theme-text-secondary">
-                    Tags <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional, press Enter to add)</span>
+                    Tags <span className="text-theme-text-secondary font-normal ml-1 text-xs">(Optional, max 10, press Enter to add)</span>
                   </label>
                   <div className="flex flex-wrap gap-2 p-3 bg-dark-bg border border-dark-border rounded-xl min-h-[48px] items-center">
                     {tags.map(tag => (
@@ -493,14 +494,18 @@ export default function SubmitPage() {
                         </button>
                       </span>
                     ))}
-                    <input
-                      className="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-theme-text placeholder:text-theme-text-muted outline-none"
-                      placeholder={tags.length === 0 ? 'e.g., defi, automation, analytics' : ''}
-                      value={tagInput}
-                      onChange={e => setTagInput(e.target.value)}
-                      onKeyDown={handleTagKeyDown}
-                      onBlur={() => { if (tagInput) addTag(tagInput); }}
-                    />
+                    {tags.length < 10 ? (
+                      <input
+                        className="flex-1 min-w-[120px] bg-transparent border-none focus:ring-0 text-sm text-theme-text placeholder:text-theme-text-muted outline-none"
+                        placeholder={tags.length === 0 ? 'e.g., defi, automation, analytics' : ''}
+                        value={tagInput}
+                        onChange={e => setTagInput(e.target.value)}
+                        onKeyDown={handleTagKeyDown}
+                        onBlur={() => { if (tagInput) addTag(tagInput); }}
+                      />
+                    ) : (
+                      <span className="text-xs text-theme-text-muted py-1">Max 10 tags reached</span>
+                    )}
                   </div>
                 </div>
               </div>

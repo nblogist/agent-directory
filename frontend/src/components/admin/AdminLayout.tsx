@@ -20,7 +20,7 @@ export function AdminLayout() {
       <aside className="w-64 flex-shrink-0 border-r border-dark-border bg-dark-bg flex flex-col">
         <div className="p-6 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-white">
-            <span className="material-symbols-outlined">radar</span>
+            <span className="material-symbols-outlined">deployed_code</span>
           </div>
           <div>
             <h1 className="font-bold text-lg leading-tight">{APP_NAME}</h1>
